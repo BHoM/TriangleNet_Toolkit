@@ -39,11 +39,25 @@ namespace BH.Engine.Geometry
         [Description("Create a Delaunay mesh from an outline and holes")]
         [Input("outerCurve", "A BHoM Polyline representing the mesh boundary")]
         [Input("innerCurves", "A list of holes to \"punch\" through the mesh generated mesh")]
+        [Input("offsetDistance", "Offset distance for innerCurves which have coincident edges - needs to be a negative value for inwards based offsetting, default -0.001")]
         [Output("curve", "A list of BHoM Polylines")]
-        public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null)
+        public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null, double offsetDistance = -0.001)
         {
             // Create a zero length list if no holes input
             if (innerCurves == null) innerCurves = new List<Polyline>();
+
+            double area = outerCurve.Area();
+            List<Polyline> outer = new List<Polyline> { outerCurve };
+            for(int x = 0; x < innerCurves.Count; x++)
+            {
+                Polyline pLine = outer.BooleanDifference(new List<Polyline> { innerCurves[x] })[0];
+
+                if(pLine.Area() != area)
+                {
+                    //The boolean difference returned a different polyline - offset this inner curve
+                    innerCurves[x] = innerCurves[x].Offset(offsetDistance);
+                }
+            }
 
             // Get the transformation matrix
             Plane plane = outerCurve.IFitPlane();
