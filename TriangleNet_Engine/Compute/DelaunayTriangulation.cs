@@ -28,7 +28,7 @@ using System.Linq;
 
 using System.ComponentModel;
 
-namespace BH.Engine.Geometry
+namespace BH.Engine.Geometry.Triangulation
 {
     public static partial class Compute
     {
