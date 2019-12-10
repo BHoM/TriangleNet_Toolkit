@@ -40,8 +40,9 @@ namespace BH.Engine.Geometry.Triangulation
         [Input("outerCurve", "A BHoM Polyline representing the mesh boundary")]
         [Input("innerCurves", "A list of holes to \"punch\" through the mesh generated mesh")]
         [Input("offsetDistance", "Offset distance for innerCurves which have coincident edges - needs to be a negative value for inwards based offsetting, default -0.001")]
+        [Input("conformingDelaunay", "Choose whether or not to have the resulting triangulation conform to Delaunay principles. This will give a higher detail triangulation. Default true")]
         [Output("curve", "A list of BHoM Polylines")]
-        public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null, double offsetDistance = -0.001)
+        public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null, double offsetDistance = -0.001, bool conformingDelaunay = true)
         {
             // Create a zero length list if no holes input
             if (innerCurves == null) innerCurves = new List<Polyline>();
@@ -108,7 +109,7 @@ namespace BH.Engine.Geometry.Triangulation
             }
 
             // Triangulate
-            TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = true, };
+            TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = conformingDelaunay, };
             TriangleNet.Meshing.QualityOptions quality = new TriangleNet.Meshing.QualityOptions() { };
             TriangleNet.Mesh mesh = (TriangleNet.Mesh)TriangleNet.Geometry.ExtensionMethods.Triangulate(parentPolygon, options, quality);
 
