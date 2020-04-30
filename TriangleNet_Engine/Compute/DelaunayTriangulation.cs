@@ -48,10 +48,9 @@ namespace BH.Engine.Geometry.Triangulation
             if (innerCurves == null) innerCurves = new List<Polyline>();
 
             double area = outerCurve.Area();
-            List<Polyline> outer = new List<Polyline> { outerCurve };
             for(int x = 0; x < innerCurves.Count; x++)
             {
-                Polyline pLine = outer.BooleanDifference(new List<Polyline> { innerCurves[x] })[0];
+                Polyline pLine = outerCurve.BooleanDifference(new List<Polyline> { innerCurves[x] })[0];
 
                 if(pLine.Area() != area)
                 {
