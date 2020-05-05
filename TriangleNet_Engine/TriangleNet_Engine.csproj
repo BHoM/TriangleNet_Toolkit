@@ -46,9 +46,24 @@
       <HintPath>..\..\BHoM\Build\Geometry_oM.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Graphics_Engine">
+      <HintPath>..\..\BHoM_Engine\Build\Graphics_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Graphics_oM">
+      <HintPath>..\..\BHoM\Build\Graphics_oM.dll</HintPath>
+    </Reference>
+    <Reference Include="Reflection_Engine">
+      <HintPath>..\..\BHoM_Engine\Build\Reflection_Engine.dll</HintPath>
+    </Reference>
     <Reference Include="Reflection_oM">
       <HintPath>..\..\BHoM\Build\Reflection_oM.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Structure_Engine">
+      <HintPath>..\..\BHoM_Engine\Build\Structure_Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Structure_oM">
+      <HintPath>..\..\BHoM\Build\Structure_oM.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,10 +80,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compute\DelaunayTriangulation.cs" />
+    <Compile Include="Compute\RenderMesh\Element0D\Node.cs" />
+    <Compile Include="Compute\RenderMesh\Element0D\Point.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\Bar.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\ICurve.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\Line.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\Pipe.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\PolyCurve.cs" />
+    <Compile Include="Compute\RenderMesh\Element1D\Polyline.cs" />
+    <Compile Include="Compute\RenderMesh\Element3D\BoundingBox.cs" />
+    <Compile Include="Compute\RenderMesh\Element3D\Cone.cs" />
+    <Compile Include="Compute\RenderMesh\Element3D\Cuboid.cs" />
+    <Compile Include="Compute\RenderMesh\Element3D\Extrusion.cs" />
+    <Compile Include="Compute\RenderMesh\Element3D\Sphere.cs" />
+    <Compile Include="Compute\RenderMesh\IRenderMesh.cs" />
+    <Compile Include="Compute\RenderMesh\Other\CompositeGeometry.cs" />
+    <Compile Include="Compute\RenderMesh\Other\Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Compute\RenderMesh\Element2D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
