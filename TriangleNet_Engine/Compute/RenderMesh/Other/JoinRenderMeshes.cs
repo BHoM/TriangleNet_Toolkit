@@ -23,12 +23,10 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
-using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
@@ -39,16 +37,28 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Polyline polyline, RenderMeshOptions renderMeshOptions = null)
+        [Description("Joins multiple RenderMeshes into a single one. Currently this does not optimise for duplicate vertices.")]
+        public static RenderMesh JoinRenderMeshes(this List<RenderMesh> renderMeshes)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            List<Vertex> vertices = new List<Vertex>();
+            List<Face> faces = new List<Face>();
 
-            double radius = 0.05 * renderMeshOptions.Element1DScale;
-            bool capped = false;
+            vertices.AddRange(renderMeshes[0].Vertices);
+            faces.AddRange(renderMeshes[0].Faces);
 
-            Pipe pipe = BH.Engine.Geometry.Create.Pipe(polyline, radius, capped);
+            for (int i = 1; i < renderMeshes.Count; i++)
+            {
+                int lastVerticesCount = vertices.Count;
+                vertices.AddRange(renderMeshes[i].Vertices);
+                faces.AddRange(
+                    renderMeshes[i].Faces.Select(f =>
+                        new Face() { A = f.A + lastVerticesCount, B = f.B + lastVerticesCount, C = f.C + lastVerticesCount, D = f.D == -1 ? f.D : f.D + lastVerticesCount }));
+            }
 
-            return pipe.RenderMesh(renderMeshOptions);
+            return new RenderMesh() { Vertices = vertices, Faces = faces };
         }
+
+        /***************************************************/
     }
 }
+

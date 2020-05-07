@@ -45,9 +45,8 @@ namespace BH.Engine.Representation
 
             Polyline polyline = null;
 
-            // Check if the PolyCurve consists of straight segments
-            if (polyCurve != null) // && polyCurve.Curves.Any(c => c is NurbsCurve) && !polyCurve.Curves.All(c => c.IsStraight()))
-                polyline = BH.Engine.Geometry.Convert.ToPolyline(polyCurve); // convert the polycurve into a polyline
+            if (polyCurve != null)
+                polyline = Rationalise(polyCurve, renderMeshOptions); // convert the polycurve into a polyline
 
             if (polyline == null)
             {
@@ -55,7 +54,7 @@ namespace BH.Engine.Representation
                 return null;
             }
 
-            return RenderMesh(polyline, renderMeshOptions);
+            return polyline.RenderMesh(renderMeshOptions);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace BH.Engine.Representation
             for (int i = 0; i < compositeGeometry.Elements.Count; i++)
                 renderMeshes.Add(IRenderMesh(compositeGeometry.Elements[i]));
 
-            return BH.Engine.Representation.Query.JoinRenderMeshes(renderMeshes);
+            return BH.Engine.Representation.Compute.JoinRenderMeshes(renderMeshes);
         }
     }
 }

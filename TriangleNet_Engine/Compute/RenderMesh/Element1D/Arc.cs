@@ -23,42 +23,29 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
+using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
-    public static partial class Query
+    public static partial class Compute
     {
         /***************************************************/
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        [Description("Joins a multiple RenderMesh into a single one. Currently this does not optimise for duplicate vertices.")]
-        public static RenderMesh JoinRenderMeshes(this List<RenderMesh> renderMeshes)
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this Arc arc, RenderMeshOptions renderMeshOptions = null)
         {
-            List<Vertex> vertices = new List<Vertex>();
-            List<Face> faces = new List<Face>();
+            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            vertices.AddRange(renderMeshes[0].Vertices);
-            faces.AddRange(renderMeshes[0].Faces);
-
-            for (int i = 1; i < renderMeshes.Count; i++)
-            {
-                int lastVerticesCount = vertices.Count;
-                vertices.AddRange(renderMeshes[i].Vertices);
-                faces.AddRange(
-                    renderMeshes[i].Faces.Select(f =>
-                        new Face() { A = f.A + lastVerticesCount, B = f.B + lastVerticesCount, C = f.C + lastVerticesCount, D = f.D == -1 ? f.D : f.D + lastVerticesCount }));
-            }
-
-            return new RenderMesh() { Vertices = vertices, Faces = faces };
+            Polyline polyline = Rationalise(arc, renderMeshOptions);
+          
+            return polyline.RenderMesh(renderMeshOptions);
         }
-
-        /***************************************************/
     }
 }
-
