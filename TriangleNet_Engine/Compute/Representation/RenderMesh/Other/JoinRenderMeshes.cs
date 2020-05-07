@@ -40,6 +40,10 @@ namespace BH.Engine.Representation
         [Description("Joins multiple RenderMeshes into a single one. Currently this does not optimise for duplicate vertices.")]
         public static RenderMesh JoinRenderMeshes(this List<RenderMesh> renderMeshes)
         {
+            renderMeshes = renderMeshes.Where(m => m != null).ToList();
+            if (renderMeshes.Count < 2)
+                return renderMeshes.FirstOrDefault();
+
             List<Vertex> vertices = new List<Vertex>();
             List<Face> faces = new List<Face>();
 

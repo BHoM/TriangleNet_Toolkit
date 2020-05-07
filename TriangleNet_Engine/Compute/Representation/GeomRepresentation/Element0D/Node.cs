@@ -103,7 +103,7 @@ namespace BH.Engine.Representation
 
             // Else: we could add more for other DOFs; for now just return the representation for its point.
             if (!isSubObject)
-                return node.Position;
+                return node.Position.GeometricalRepresentation(reprOptions);
             else
                 return null; //do not return representation for point if the Nodes are sub-objects (e.g. of a bar)
         }

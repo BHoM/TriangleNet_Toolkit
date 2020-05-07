@@ -45,16 +45,9 @@ namespace BH.Engine.Representation
 
             Line line = extrusion.Curve as Line;
             Polyline polyline = extrusion.Curve as Polyline;
-            PolyCurve polyCurve = extrusion.Curve as PolyCurve;
 
-            if (polyCurve != null)
-            {
-                // Check if the Curve/PolyCurve consists of straight segments
-                //if (curve != null && curve.IsStraight())
-                //    line = BH.Engine.Geometry.Create.Line(curve.IStartPoint(), curve.IEndPoint()); // convert the curve into a straight line - commented out as it would support only Arcs.
-                if (polyCurve != null) // && !polyCurve.Curves.Any(c => !c.IsStraight()))
-                    polyline = Compute.Rationalise(polyCurve, renderMeshOptions); // convert the polycurve into a polyline
-            }
+            if (line == null && polyline == null)
+                polyline = Compute.IRationalise(extrusion.Curve, renderMeshOptions); // try to rationalise
 
             if (line == null && polyline == null)
             {
@@ -87,7 +80,7 @@ namespace BH.Engine.Representation
                 for (int i = 0; i < faceNo; i++)
                 {
                     int add = 0;//extrusion.Curve.IIsClosed() ? 1 : 0;
-                    
+
                     faces.Add(new Face() { A = i, B = i + 1, C = polyline.ControlPoints.Count() + (i + 1) + add, D = polyline.ControlPoints.Count() + i + add });
                 }
 

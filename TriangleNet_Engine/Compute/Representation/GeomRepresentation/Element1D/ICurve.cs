@@ -44,7 +44,7 @@ namespace BH.Engine.Representation
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
 
-            double radius = 0.05 * reprOptions.Element1DScale;
+            double radius = 0.01 * reprOptions.Element1DScale;
             bool capped = reprOptions.Cap1DElements;
 
             return BH.Engine.Geometry.Create.Pipe(curve, radius, capped);
