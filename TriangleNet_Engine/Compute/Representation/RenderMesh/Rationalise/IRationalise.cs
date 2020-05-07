@@ -40,8 +40,7 @@ namespace BH.Engine.Representation
         [Description("Rationalises the Curve into a Polyline.")]
         public static Polyline IRationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
-            Rationalise(curve as dynamic, renderMeshOptions);
-            return null;
+            return Rationalise(curve as dynamic, renderMeshOptions); ;
         }
 
         // Fallback

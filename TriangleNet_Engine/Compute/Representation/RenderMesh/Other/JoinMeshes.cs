@@ -40,6 +40,10 @@ namespace BH.Engine.Representation
         [Description("Joins multiple Meshes into a single one. Currently this does not optimise for duplicate vertices.")]
         public static Mesh JoinMeshes(List<Mesh> meshes)
         {
+            meshes = meshes.Where(m => m != null).ToList();
+            if (meshes.Count < 2)
+                return meshes.FirstOrDefault();
+
             List<BH.oM.Geometry.Point> vertices = new List<BH.oM.Geometry.Point>();
             List<Face> faces = new List<Face>();
 

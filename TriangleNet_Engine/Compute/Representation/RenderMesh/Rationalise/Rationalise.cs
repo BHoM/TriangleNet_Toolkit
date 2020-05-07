@@ -38,17 +38,14 @@ namespace BH.Engine.Representation
         /***************************************************/
 
         [Description("Rationalises the Polycurve into a Polyline. Currently limited functionality (Arcs, or Polycurves of already linear segments).")]
-        public static Polyline Rationalise(this PolyCurve curve, RenderMeshOptions renderMeshOptions = null)
+        public static Polyline Rationalise(this PolyCurve curve, RenderMeshOptions renderMeshOptions = null, int minSubdivisions = 3)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             if (curve.Curves.Count == 0)
                 return new Polyline();
 
-            var gnba = curve.SubParts();
-
             Polyline polyline = new Polyline();
-
             polyline.ControlPoints.Add(curve.SubParts()[0].IStartPoint());
 
             foreach (ICurve c in curve.SubParts())
@@ -60,7 +57,11 @@ namespace BH.Engine.Representation
                     continue;
                 }
 
-                polyline.ControlPoints.AddRange(Rationalise(c as dynamic).ControlPoints.Skip(1));
+                Polyline rationalised = Rationalise(c as dynamic, renderMeshOptions, minSubdivisions);
+
+                List<Point> points = rationalised.ControlPoints.Skip(1).ToList();
+
+                polyline.ControlPoints.AddRange(points);
             }
 
             if (polyline == null || polyline.ControlPoints.Count < 2)
@@ -72,7 +73,7 @@ namespace BH.Engine.Representation
         /***************************************************/
 
         [Description("Rationalises the Arc into a Polyline.")]
-        public static Polyline Rationalise(this Arc arc, RenderMeshOptions renderMeshOptions = null)
+        public static Polyline Rationalise(this Arc arc, RenderMeshOptions renderMeshOptions = null, int minSubdivisions = 3)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
@@ -85,19 +86,21 @@ namespace BH.Engine.Representation
             else
             {
                 // If not, subdivide the arc.
-
                 int numSubdvision = (int)(Math.Ceiling(Math.Abs(arc.StartAngle - 1.5708) / 1.5708) * renderMeshOptions.Element1DRefinement);
+                numSubdvision = numSubdvision < minSubdivisions ? minSubdivisions : numSubdvision;
 
                 List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
 
                 controlPoints.AddRange(pointParams.Select(par => arc.IPointAtParameter(par)));
             }
 
+            polyline.ControlPoints = controlPoints;
+
             return polyline;
         }
 
         [Description("Rationalises the Circle into a Polyline.")]
-        public static Polyline Rationalise(this Circle circle, RenderMeshOptions renderMeshOptions = null)
+        public static Polyline Rationalise(this Circle circle, RenderMeshOptions renderMeshOptions = null, int minSubdivisions = 3)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
@@ -106,16 +109,16 @@ namespace BH.Engine.Representation
             List<Point> controlPoints = new List<Point> { circle.IStartPoint() };
 
             // Subdivide the circle.
-            int minSubdivisions = 3;
-
             // Empyrical formula to extract a reasonable amount of segments
-            int numSubdvision = (int)(Math.Ceiling(circle.Radius * 20) * renderMeshOptions.Element1DRefinement);
-
+            int numSubdvision = (int)(Math.Ceiling(circle.Radius * 60) * renderMeshOptions.Element1DRefinement);
             numSubdvision = numSubdvision < minSubdivisions ? minSubdivisions : numSubdvision;
 
             List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
+            pointParams.Add(1);
 
             controlPoints.AddRange(pointParams.Select(par => circle.IPointAtParameter(par)));
+
+            polyline.ControlPoints = controlPoints;
 
             return polyline;
         }

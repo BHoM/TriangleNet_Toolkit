@@ -54,9 +54,11 @@ namespace BH.Engine.Representation
                 int pipeFaces = (int)Math.Ceiling(3 * renderMeshOptions.Element1DRefinement);
                 List<double> pointParams = Enumerable.Range(0, pipeFaces + 1).Select(i => (double)((double)i / (double)pipeFaces)).ToList();
 
-                Circle c = BH.Engine.Geometry.Create.Circle(centreLine.Start, centreLine.Direction(), radius);
+                Circle c = BH.Engine.Geometry.Create.Circle(centreLine.Start, centreLine.Direction(), radius * renderMeshOptions.RepresentationOptions.Element1DScale);
 
-                Polyline polyline = BH.Engine.Geometry.Create.Polyline(pointParams.Select(par => c.IPointAtParameter(par)));
+                var gna = BH.Engine.Geometry.Create.Polyline(pointParams.Select(par => c.IPointAtParameter(par)));
+                Polyline polyline = Rationalise(c, renderMeshOptions);
+
                 Vector lengthVector = new Vector()
                 {
                     X = centreLine.End.X - centreLine.Start.X,
