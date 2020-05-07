@@ -98,11 +98,10 @@
     <Compile Include="Compute\Representation\GeomRepresentation\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element0D\Node.cs" />
     <Compile Include="Compute\Representation\GeomRepresentation\Element1D\Bar.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Bar.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\Arc.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Line.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\PolyCurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Polyline.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\BoundingBox.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Cone.cs" />
@@ -110,7 +109,8 @@
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Extrusion.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Sphere.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\JoinRenderMeshes.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Other\Rationalise.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Rationalise\IRationalise.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Rationalise\Rationalise.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\JoinMeshes.cs" />
     <Compile Include="Compute\Representation\RenderMesh\IRenderMesh.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\CompositeGeometry.cs" />

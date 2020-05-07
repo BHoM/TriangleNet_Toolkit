@@ -46,7 +46,7 @@ namespace BH.Engine.Representation
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            return bar.IGeometricalRepresentation(renderMeshOptions.RepresentationOptions).IRenderMesh(renderMeshOptions);
+            return bar.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).IRenderMesh(renderMeshOptions);
         }
     }
 }

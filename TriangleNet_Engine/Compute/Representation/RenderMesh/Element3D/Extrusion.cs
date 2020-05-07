@@ -94,7 +94,7 @@ namespace BH.Engine.Representation
                 if (extrusion.Curve.IIsClosed() && extrusion.Capped)
                 {
                     // Needs appropriate meshing method for caps
-                    BH.Engine.Reflection.Compute.RecordWarning("Mesh of Extrusion caps still not implemented");
+                    BH.Engine.Reflection.Compute.RecordNote("Mesh of Extrusion caps still not implemented");
                 }
 
                 return new RenderMesh() { Vertices = points.Select(pt => (Vertex)pt).ToList(), Faces = faces };
