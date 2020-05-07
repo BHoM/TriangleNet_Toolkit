@@ -23,10 +23,12 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
+using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
@@ -37,55 +39,23 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        [Description("Rationalises the Polycurve. Currently limited functionality (Arcs, or Polycurves of already linear segments).")]
-        public static Polyline Rationalise(this PolyCurve curve, RenderMeshOptions renderMeshOptions = null)
+        [Description("Rationalises the arc into a Polyline, then returns the renderMesh of the polyline.")]
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            if (curve.Curves.Count == 0)
-                return new Polyline();
+            Polyline polyline = null;
 
-            foreach (ICurve c in curve.SubParts())
-            {
-                Line line = c as Line;
-                if (line != null)
-                    return new Polyline() { ControlPoints = new List<Point> { line.Start, line.End } };
+            // If it's a Line or a Polyline, no need for rationalisation.
+            if (curve is Polyline || curve is Line)
+                return curve.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
 
-                Arc arc = c as Arc;
-                if (arc != null)
-                    return Rationalise(arc);
-            }
+            // Else, try rationalising the curve.
+            polyline = IRationalise(curve, renderMeshOptions);
+            if (polyline != null)
+                return polyline.RenderMesh(renderMeshOptions);
 
-            BH.Engine.Reflection.Compute.RecordError("Rationalisation of curves currently only supports Arcs.");
             return null;
-        }
-
-        /***************************************************/
-
-        [Description("Rationalises the Polycurve. Currently limited functionality (Arcs, or Polycurves of already linear segments).")]
-        public static Polyline Rationalise(this Arc arc, RenderMeshOptions renderMeshOptions = null)
-        {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
-
-            Polyline polyline = new Polyline();
-
-            List<Point> controlPoints = new List<Point> { arc.IStartPoint() };
-
-            if (arc.Radius < 0.01 && Math.Abs(arc.StartAngle - 1.5708) < 0.1)
-                controlPoints.Add(arc.IEndPoint());
-            else
-            {
-                // If not, subdivide the arc.
-
-                int numSubdvision = (int)Math.Ceiling(Math.Abs(arc.StartAngle - 1.5708) / 1.5708);
-
-                List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
-
-                controlPoints.AddRange(pointParams.Select(par => arc.IPointAtParameter(par)));
-            }
-
-            return polyline;
         }
     }
 }
-

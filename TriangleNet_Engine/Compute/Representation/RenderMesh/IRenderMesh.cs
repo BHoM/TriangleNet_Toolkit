@@ -54,17 +54,12 @@ namespace BH.Engine.Representation
             IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
 
             if (geomRepr == null)
-            {
-                BH.Engine.Reflection.Compute.RecordError($"Could not find a geometrical representation for {obj.GetType().Name}");
                 return null;
-            }
 
-            RenderMesh renderMesh = geomRepr.IRenderMesh();
+            RenderMesh renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
 
-            if (geomRepr == null)
-            {
+            if (renderMesh == null)
                 BH.Engine.Reflection.Compute.RecordError($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}");
-            }
 
             return renderMesh;
         }

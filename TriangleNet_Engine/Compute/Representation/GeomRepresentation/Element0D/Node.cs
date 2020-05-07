@@ -75,7 +75,7 @@ namespace BH.Engine.Representation
                     new Point() { X = centrePoint.X + 2 * boxDims, Y = centrePoint.Y + 2 * boxDims, Z = centrePoint.Z + boxDims * 1.5},
                     new Point() { X = centrePoint.X - 2 * boxDims, Y = centrePoint.Y - 2 * boxDims, Z = centrePoint.Z - boxDims * 1.5 });
 
-                return RenderMesh(bbox);
+                return bbox;
             }
 
             if (fixedToTranslation && !fixedToRotation)

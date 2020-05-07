@@ -44,14 +44,14 @@ namespace BH.Engine.Representation
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             double radius = pipe.Radius;
-            bool capped = false;
+            bool capped = renderMeshOptions.RepresentationOptions.Cap1DElements;
 
             Line centreLine = pipe.Centreline as Line;
             Polyline centrePolyline = pipe.Centreline as Polyline;
 
             if (centreLine != null)
             {
-                int pipeFaces = 3;
+                int pipeFaces = (int)Math.Ceiling(3 * renderMeshOptions.Element1DRefinement);
                 List<double> pointParams = Enumerable.Range(0, pipeFaces + 1).Select(i => (double)((double)i / (double)pipeFaces)).ToList();
 
                 Circle c = BH.Engine.Geometry.Create.Circle(centreLine.Start, centreLine.Direction(), radius);
@@ -65,7 +65,7 @@ namespace BH.Engine.Representation
                 };
 
                 Extrusion extr = BH.Engine.Geometry.Create.Extrusion(polyline, lengthVector);
-                extr.Capped = false;
+                extr.Capped = capped;
 
                 return RenderMesh(extr, renderMeshOptions);
             }

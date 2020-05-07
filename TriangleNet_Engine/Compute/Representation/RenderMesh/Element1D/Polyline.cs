@@ -43,7 +43,7 @@ namespace BH.Engine.Representation
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            return polyline.IGeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
+            return polyline.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
         }
     }
 }

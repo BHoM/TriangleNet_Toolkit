@@ -52,7 +52,7 @@ namespace BH.Engine.Representation
             {
                 // Gets the BH.oM.Geometry.Extrusion out of the Bar. If the profile is made of two curves (e.g. I section), selects only the outermost.
                 Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
-                barOutermostExtrusion.Capped = false;
+                barOutermostExtrusion.Capped = reprOptions.Cap1DElements;
 
                 return barOutermostExtrusion;
             }

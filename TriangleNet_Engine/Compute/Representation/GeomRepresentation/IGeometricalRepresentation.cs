@@ -43,10 +43,25 @@ namespace BH.Engine.Representation
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
 
-            IGeometry geometricalRepresentation = GeometricalRepresentation(obj as dynamic, reprOptions);
+            IGeometry geometricalRepresentation = null;
+
+            // First check if there is a specific GeometricalRepresentation method for the IObject.
+            geometricalRepresentation = GeometricalRepresentation(obj as dynamic, reprOptions);
+            if (geometricalRepresentation != null)
+                return geometricalRepresentation;
+
+            // If not, check if the object is a IGeometry, and if it is return itself.
+            geometricalRepresentation = obj as IGeometry;
+            if (geometricalRepresentation != null)
+                return geometricalRepresentation;
+
+            // If not, check if the object is a IBHoMObject whose IGeometry can be returned.
+            IBHoMObject bHoMObject = obj as IBHoMObject;
+            if (bHoMObject != null)
+                geometricalRepresentation = BH.Engine.Base.Query.IGeometry(bHoMObject);
 
             if (geometricalRepresentation == null)
-                geometricalRepresentation = BH.Engine.Base.Query.IGeometry(((IBHoMObject)obj));
+                BH.Engine.Reflection.Compute.RecordError($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}");
 
             return geometricalRepresentation;
         }
@@ -56,5 +71,5 @@ namespace BH.Engine.Representation
         {
             return null;
         }
-    } 
+    }
 }

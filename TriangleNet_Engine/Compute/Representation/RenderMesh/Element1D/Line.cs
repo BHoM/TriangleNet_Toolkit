@@ -43,7 +43,9 @@ namespace BH.Engine.Representation
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            return line.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
+            IGeometry geometricalRepresentation = line.GeometricalRepresentation(renderMeshOptions.RepresentationOptions);
+
+            return IRenderMesh(geometricalRepresentation, renderMeshOptions);
         }
     }
 }

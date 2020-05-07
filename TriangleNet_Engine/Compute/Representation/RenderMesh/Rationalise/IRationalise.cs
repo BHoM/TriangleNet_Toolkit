@@ -23,12 +23,10 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
-using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
@@ -39,14 +37,19 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        [Description("Rationalises the arc into a Polyline, then returns the renderMesh of the polyline.")]
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Arc arc, RenderMeshOptions renderMeshOptions = null)
+        [Description("Rationalises the Curve into a Polyline.")]
+        public static Polyline IRationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            Rationalise(curve as dynamic, renderMeshOptions);
+            return null;
+        }
 
-            Polyline polyline = Rationalise(arc, renderMeshOptions);
-          
-            return polyline.RenderMesh(renderMeshOptions);
+        // Fallback
+        private static Polyline Rationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
+        {
+            BH.Engine.Reflection.Compute.RecordError($"Could not find a method to rationalise the curve {curve.GetType().Name}. Currently support only Arc and Circle.");
+            return null;
         }
     }
 }
+
