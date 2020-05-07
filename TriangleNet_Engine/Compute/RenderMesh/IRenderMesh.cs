@@ -57,7 +57,7 @@ namespace BH.Engine.Representation
         // Fallback
         private static BH.oM.Graphics.RenderMesh RenderMesh(this IGeometry geom, RenderMeshOptions renderMeshOptions = null)
         {
-            BH.Engine.Reflection.Compute.RecordError($"Failed to find a method to compute the Mesh representation of {geom.GetType().Name}");
+            BH.Engine.Reflection.Compute.RecordError($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {geom.GetType().Name}");
             return null;
         }
 

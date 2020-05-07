@@ -46,7 +46,7 @@ namespace BH.Engine.Representation
 
         private static Vector Product(this Vector a, double scalar)
         {
-            return Modify.Scale(a, scalar);
+            return Compute.Scale(a, scalar);
         }
 
         private static bool IsStraight(this ICurve curve)

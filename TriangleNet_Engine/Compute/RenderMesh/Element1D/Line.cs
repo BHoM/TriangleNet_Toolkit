@@ -50,7 +50,7 @@ namespace BH.Engine.Representation
 
             Pipe pipe = BH.Engine.Geometry.Create.Pipe(line, radius, capped);
 
-            return pipe.RenderMesh();
+            return pipe.RenderMesh(renderMeshOptions);
         }
     }
 }

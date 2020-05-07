@@ -43,6 +43,8 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Cone cone, RenderMeshOptions renderMeshOptions = null)
         {
+            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+
             int coneFaces = 4; // by default this creates a pyramid
             List<double> pointParams = new List<double>();
 
@@ -51,11 +53,9 @@ namespace BH.Engine.Representation
             else
                 pointParams = Enumerable.Range(0, coneFaces + 1).Select(i => (double)((double)i / (double)coneFaces)).ToList();
 
-            pointParams.ForEach(pp => pp += 0.25);
-
             Circle baseCircle = BH.Engine.Geometry.Create.Circle(cone.Centre, cone.Axis, cone.Radius);
             List<Point> pointsOnBase = pointParams.Select(par => baseCircle.IPointAtParameter(par)).ToList();
-            Vector coneHeightVector = BHEG.Modify.Scale(cone.Axis, cone.Height);
+            Vector coneHeightVector = Compute.Scale(cone.Axis, cone.Height);
 
             Point topPoint = new Point() {
                 X = cone.Centre.X + BHEG.Modify.Project(coneHeightVector, BHOG.Plane.XY).X,

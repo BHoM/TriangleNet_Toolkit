@@ -54,7 +54,7 @@ namespace BH.Engine.Representation
                 Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
                 barOutermostExtrusion.Capped = false;
 
-                return barOutermostExtrusion.RenderMesh();
+                return barOutermostExtrusion.RenderMesh(renderMeshOptions);
             }
         }
     }
