@@ -39,16 +39,15 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Polyline polyline, RenderMeshOptions renderMeshOptions = null)
+        [Description("Returns the piped curve.")]
+        public static IGeometry GeometricalRepresentation(this ICurve curve, RepresentationOptions reprOptions = null)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            reprOptions = reprOptions ?? new RepresentationOptions();
 
-            double radius = 0.05 * renderMeshOptions.Element1DScale;
+            double radius = 0.05 * reprOptions.Element1DScale;
             bool capped = false;
 
-            Pipe pipe = BH.Engine.Geometry.Create.Pipe(polyline, radius, capped);
-
-            return pipe.RenderMesh(renderMeshOptions);
+            return BH.Engine.Geometry.Create.Pipe(curve, radius, capped); ;
         }
     }
 }

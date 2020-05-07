@@ -93,31 +93,37 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compute\DelaunayTriangulation.cs" />
-    <Compile Include="Compute\RenderMesh\Element0D\Node.cs" />
-    <Compile Include="Compute\RenderMesh\Element0D\Point.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\Bar.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\Arc.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\Line.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\Pipe.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\PolyCurve.cs" />
-    <Compile Include="Compute\RenderMesh\Element1D\Polyline.cs" />
-    <Compile Include="Compute\RenderMesh\Element3D\BoundingBox.cs" />
-    <Compile Include="Compute\RenderMesh\Element3D\Cone.cs" />
-    <Compile Include="Compute\RenderMesh\Element3D\Cuboid.cs" />
-    <Compile Include="Compute\RenderMesh\Element3D\Extrusion.cs" />
-    <Compile Include="Compute\RenderMesh\Element3D\Sphere.cs" />
-    <Compile Include="Compute\RenderMesh\Other\Rationalise.cs" />
-    <Compile Include="Compute\RenderMesh\Other\JoinRenderMeshes.cs" />
-    <Compile Include="Compute\RenderMesh\IRenderMesh.cs" />
-    <Compile Include="Compute\RenderMesh\Other\CompositeGeometry.cs" />
-    <Compile Include="Compute\RenderMesh\Other\Utilities.cs" />
+    <Compile Include="Compute\Representation\GeomRepresentation\Element0D\Point.cs" />
+    <Compile Include="Compute\Representation\GeomRepresentation\Element0D\Node.cs" />
+    <Compile Include="Compute\Representation\GeomRepresentation\Element1D\ICurve.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element0D\Node.cs" />
+    <Compile Include="Compute\Representation\GeomRepresentation\Element1D\Bar.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\Bar.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\Arc.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\Line.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\PolyCurve.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element1D\Polyline.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\BoundingBox.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\Cone.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\Cuboid.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\Extrusion.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element3D\Sphere.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Other\Rationalise.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Other\JoinRenderMeshes.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\IRenderMesh.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Other\CompositeGeometry.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Other\Utilities.cs" />
+    <Compile Include="Compute\Representation\GeomRepresentation\IGeometricalRepresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Compute\RenderMesh\Element2D\" />
+    <Folder Include="Compute\Representation\GeomRepresentation\Element2D\" />
+    <Folder Include="Compute\Representation\GeomRepresentation\Element3D\" />
+    <Folder Include="Compute\Representation\RenderMesh\Element2D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

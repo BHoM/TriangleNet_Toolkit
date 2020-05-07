@@ -39,24 +39,41 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Point point, RenderMeshOptions renderMeshOptions = null, bool isSubObject = false)
+        // Main interface method
+        public static BH.oM.Graphics.RenderMesh IRenderMesh(this IObject obj, RenderMeshOptions renderMeshOptions = null)
         {
-            if (isSubObject) // if it is a property of another object (e.g. a Line) do not display its endpoints as spheres.
-                return null;
-
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            double radius = 0.15 * renderMeshOptions.Element0DScale;
+            if (obj is BH.oM.Graphics.RenderMesh)
+                return obj as BH.oM.Graphics.RenderMesh;
 
-            // // - Sphere still doesn't work properly
-            //Sphere sphere = BH.Engine.Geometry.Create.Sphere(point, radius);
+            BH.oM.Geometry.Mesh mesh = obj as BH.oM.Geometry.Mesh;
+            if (mesh != null)
+                return (RenderMesh)mesh;
 
-            //return sphere.RenderMesh(renderMeshOptions);
+            IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
 
-            // // - For now just return a little cube instead of a sphere.
-            Cuboid cuboid = BH.Engine.Geometry.Create.Cuboid(BH.Engine.Geometry.Create.CartesianCoordinateSystem(point, BH.Engine.Geometry.Create.Vector(1,0,0), BH.Engine.Geometry.Create.Vector(0, 1, 0)), radius, radius, radius);
-            return cuboid.RenderMesh(renderMeshOptions);
+            if (geomRepr == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Could not find a geometrical representation for {obj.GetType().Name}");
+                return null;
+            }
+
+            RenderMesh renderMesh = geomRepr.IRenderMesh();
+
+            if (geomRepr == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}");
+            }
+
+            return renderMesh;
         }
-   
+
+        // Fallback
+        private static BH.oM.Graphics.RenderMesh RenderMesh(this IGeometry geom, RenderMeshOptions renderMeshOptions = null)
+        {
+            return null;
+        }
+
     } 
 }

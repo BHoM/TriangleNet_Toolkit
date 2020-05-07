@@ -30,9 +30,6 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Structure.Elements;
-using BH.Engine.Structure;
-using BH.oM.Structure.Constraints;
 
 namespace BH.Engine.Representation
 {
@@ -42,20 +39,22 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Bar bar, RenderMeshOptions renderMeshOptions = null)
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this PolyCurve polyCurve, RenderMeshOptions renderMeshOptions = null)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            if (!renderMeshOptions.Detailed1DElements)
-                return bar.Centreline().RenderMesh(renderMeshOptions); //returns the piped centreline.
-            else
-            {
-                // Gets the BH.oM.Geometry.Extrusion out of the Bar. If the profile is made of two curves (e.g. I section), selects only the outermost.
-                Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
-                barOutermostExtrusion.Capped = false;
+            Polyline polyline = null;
 
-                return barOutermostExtrusion.RenderMesh(renderMeshOptions);
+            if (polyCurve != null)
+                polyline = Rationalise(polyCurve, renderMeshOptions); // convert the polycurve into a polyline
+
+            if (polyline == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError($"RenderMesh for {nameof(PolyCurve)} currently works only if it is composed of linear segments.");
+                return null;
             }
+
+            return polyline.IRenderMesh(renderMeshOptions);
         }
     }
 }

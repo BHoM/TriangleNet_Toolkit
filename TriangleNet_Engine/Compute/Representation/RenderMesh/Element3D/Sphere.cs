@@ -45,9 +45,13 @@ namespace BH.Engine.Representation
 
             BH.Engine.Reflection.Compute.RecordNote("RenderMesh for sphere still doesn't work properly and needs to be finished. A cube is output instead of a sphere.");
 
-            return sphere.Centre.RenderMesh(renderMeshOptions);
+            double radius = sphere.Radius;
 
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            // // - Sphere still doesn't work properly, for now just return a little cube instead of a sphere.
+            Cuboid cuboid = BH.Engine.Geometry.Create.Cuboid(BH.Engine.Geometry.Create.CartesianCoordinateSystem(sphere.Centre, BH.Engine.Geometry.Create.Vector(1, 0, 0), BH.Engine.Geometry.Create.Vector(0, 1, 0)), radius, radius, radius);
+            return cuboid.RenderMesh(renderMeshOptions);
+
+            // // - WIP Code for sphere mesh.
 
             int nLongitude = 6;                  // Number of vertical lines.
             int nLatitude = nLongitude / 2;      // Number of horizontal lines. A good sphere mesh has about half the number of longitude lines than latitude.
@@ -63,7 +67,6 @@ namespace BH.Engine.Representation
             interLatitudeAngle = interLatitudeAngle * DEGS_TO_RAD;
             double interLongitudeAngle = (360 / nLongitude);
             interLongitudeAngle = interLongitudeAngle * DEGS_TO_RAD;
-            double radius = sphere.Radius;
             Point centrePoint = sphere.Centre;
 
             // ------- Generate all points -------- //
