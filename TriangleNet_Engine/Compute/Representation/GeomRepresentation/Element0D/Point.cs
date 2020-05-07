@@ -29,7 +29,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
-using System.ComponentModel;
+
 
 namespace BH.Engine.Representation
 {
@@ -39,22 +39,18 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this PolyCurve polyCurve, RenderMeshOptions renderMeshOptions = null)
+        public static IGeometry GeometricalRepresentation(this Point point, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
-
-            Polyline polyline = null;
-
-            if (polyCurve != null)
-                polyline = Rationalise(polyCurve, renderMeshOptions); // convert the polycurve into a polyline
-
-            if (polyline == null)
-            {
-                BH.Engine.Reflection.Compute.RecordError($"RenderMesh for {nameof(PolyCurve)} currently works only if it is composed of linear segments.");
+            if (isSubObject) // if it is a property of another object (e.g. a Line) do not display its endpoints.
                 return null;
-            }
 
-            return polyline.RenderMesh(renderMeshOptions);
+            reprOptions = reprOptions ?? new RepresentationOptions();
+
+            double radius = 0.15 * reprOptions.Element0DScale;
+            Sphere sphere = BH.Engine.Geometry.Create.Sphere(point, radius);
+
+            return sphere;
         }
-    }
+   
+    } 
 }

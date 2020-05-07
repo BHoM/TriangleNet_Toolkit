@@ -40,9 +40,9 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Node node, RenderMeshOptions renderMeshOptions = null, bool isSubObject = false)
+        public static IGeometry GeometricalRepresentation(this Node node, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            reprOptions = reprOptions ?? new RepresentationOptions();
 
             if (node.Position == null)
             {
@@ -50,8 +50,8 @@ namespace BH.Engine.Representation
                 return null;
             }
 
-            if (node.Support == null || !renderMeshOptions.Detailed0DElements) // If there is no support information, or by choice...
-                return BH.Engine.Structure.Query.Position(node).RenderMesh(renderMeshOptions, isSubObject); // ...just return the representation for the point.
+            if (node.Support == null || !reprOptions.Detailed0DElements) // If there is no support information, or by choice...
+                return BH.Engine.Structure.Query.Position(node); // ...just return the representation for the point.
 
             // -------------------------------------------- //
             // -------- Compute the representation -------- //
@@ -68,7 +68,7 @@ namespace BH.Engine.Representation
             if (fixedToTranslation && fixedToRotation)
             {
                 // Fully fixed: box
-                double boxDims = 0.2 * renderMeshOptions.Element0DScale;
+                double boxDims = 0.2 * reprOptions.Element0DScale;
 
                 var centrePoint = node.Position;
                 BoundingBox bbox = BH.Engine.Geometry.Create.BoundingBox(
@@ -81,7 +81,7 @@ namespace BH.Engine.Representation
             if (fixedToTranslation && !fixedToRotation)
             {
                 // Pin: cone + sphere
-                double radius = 0.15 * renderMeshOptions.Element0DScale;
+                double radius = 0.15 * reprOptions.Element0DScale;
 
                 CompositeGeometry compositeGeometry = new CompositeGeometry();
 
@@ -98,12 +98,12 @@ namespace BH.Engine.Representation
                     );
                 compositeGeometry.Elements.Add(cone);
 
-                return compositeGeometry.RenderMesh();
+                return compositeGeometry;
             }
 
             // Else: we could add more for other DOFs; for now just return the representation for its point.
             if (!isSubObject)
-                return RenderMesh(node.Position);
+                return node.Position;
             else
                 return null; //do not return representation for point if the Nodes are sub-objects (e.g. of a bar)
         }

@@ -30,6 +30,9 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Structure.Elements;
+using BH.Engine.Structure;
+using BH.oM.Structure.Constraints;
 
 namespace BH.Engine.Representation
 {
@@ -39,13 +42,20 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Arc arc, RenderMeshOptions renderMeshOptions = null)
+        public static IGeometry GeometricalRepresentation(this Bar bar, RepresentationOptions reprOptions = null)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            reprOptions = reprOptions ?? new RepresentationOptions();
 
-            Polyline polyline = Rationalise(arc, renderMeshOptions);
-          
-            return polyline.RenderMesh(renderMeshOptions);
+            if (!reprOptions.Detailed1DElements)
+                return bar.Centreline(); //returns the piped centreline.
+            else
+            {
+                // Gets the BH.oM.Geometry.Extrusion out of the Bar. If the profile is made of two curves (e.g. I section), selects only the outermost.
+                Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
+                barOutermostExtrusion.Capped = false;
+
+                return barOutermostExtrusion;
+            }
         }
     }
 }
