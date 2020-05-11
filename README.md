@@ -1,4 +1,4 @@
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) [![Build status](https://ci.appveyor.com/api/projects/status/6w09w0o5y90r6vtt/branch/master?svg=true)](https://ci.appveyor.com/api/projects/status/6w09w0o5y90r6vtt/branch/master)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0) [![Build status](https://ci.appveyor.com/api/projects/status/6w09w0o5y90r6vtt/branch/master?svg=true)](https://ci.appveyor.com/api/projects/status/trianglenet_toolkit/branch/master)
 ) [![Build Status](https://dev.azure.com/BHoMBot/BHoM/_apis/build/status/TriangleNet_Toolkit/TriangleNet_Toolkit.CheckCore?branchName=master)](https://dev.azure.com/BHoMBot/BHoM/_build/latest?definitionId=93&branchName=master)
 
 # TriangleNet_Toolkit
