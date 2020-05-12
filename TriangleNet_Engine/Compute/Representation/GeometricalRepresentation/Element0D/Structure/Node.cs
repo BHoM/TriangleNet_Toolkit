@@ -31,6 +31,7 @@ using BH.Engine.Geometry;
 using BH.oM.Base;
 using BH.oM.Structure.Elements;
 using BH.oM.Structure.Constraints;
+using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
@@ -40,6 +41,7 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
+        [Description("Returns the geometrical representation of the Node. It can be as simple as a Sphere, or a more complicated Composite Geometry computed from its DOFs.")]
         public static IGeometry GeometricalRepresentation(this Node node, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();

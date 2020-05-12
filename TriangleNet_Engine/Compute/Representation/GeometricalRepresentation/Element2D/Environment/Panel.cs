@@ -38,6 +38,7 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
+        [Description("Returns the geometrical representation of the Environment Panel. It can be as simple as its middle Surface, Composite Geometry representing its thickness.")]
         public static IGeometry GeometricalRepresentation(this BH.oM.Environment.Elements.Panel panel, RepresentationOptions reprOptions = null)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();

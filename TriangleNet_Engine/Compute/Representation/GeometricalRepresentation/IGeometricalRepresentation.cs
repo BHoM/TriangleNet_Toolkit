@@ -29,7 +29,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
-
+using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
@@ -39,6 +39,8 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
+        [Description("Computes the Geometrical Representation of the given IObject." +
+            "The Geometrical Representation is an IGeometry that can be used to represent the object in another environment.")] //e.g. to 3D-print a point, you want to print a Sphere.
         public static IGeometry IGeometricalRepresentation(this IObject obj, RepresentationOptions reprOptions = null)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
