@@ -46,6 +46,14 @@
       <HintPath>..\..\BHoM\Build\Dimensional_oM.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Environment_Engine">
+      <HintPath>..\..\BHoM_Engine\Build\Environment_Engine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Environment_oM">
+      <HintPath>..\..\BHoM\Build\Environment_oM.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Geometry_Engine">
       <HintPath>..\..\BHoM_Engine\Build\Geometry_Engine.dll</HintPath>
       <Private>False</Private>
@@ -94,16 +102,14 @@
   <ItemGroup>
     <Compile Include="Compute\DelaunayTriangulation.cs" />
     <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Point.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Node.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Structure\Node.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element2D\Environment\Panel.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element2D\Structure\Panel.cs" />
     <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\ICurve.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element0D\Node.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\Bar.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\Structure\Bar.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\Bar.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\Line.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element2D\PlanarSurface.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\Polyline.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\BoundingBox.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Cone.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Cuboid.cs" />
@@ -123,9 +129,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Compute\Representation\GeometricalRepresentation\Element2D\" />
     <Folder Include="Compute\Representation\GeometricalRepresentation\Element3D\" />
-    <Folder Include="Compute\Representation\RenderMesh\Element2D\" />
+    <Folder Include="Compute\Representation\RenderMesh\Element0D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

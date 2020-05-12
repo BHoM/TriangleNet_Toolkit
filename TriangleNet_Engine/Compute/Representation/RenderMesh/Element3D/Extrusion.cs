@@ -47,7 +47,7 @@ namespace BH.Engine.Representation
             Polyline polyline = extrusion.Curve as Polyline;
 
             if (line == null && polyline == null)
-                polyline = Compute.IRationalise(extrusion.Curve, renderMeshOptions); // try to rationalise
+                polyline = Compute.IRationalise(extrusion.Curve, renderMeshOptions); // try to rationalise the extrusion profile
 
             if (line == null && polyline == null)
             {
@@ -70,6 +70,9 @@ namespace BH.Engine.Representation
                 return new RenderMesh() { Faces = faces, Vertices = points.Cast<Vertex>().ToList() };
             }
 
+            RenderMesh bottomCap = null;
+            RenderMesh topCap = null;
+
             if (polyline != null)
             {
                 points.AddRange(polyline.ControlPoints);
@@ -86,11 +89,28 @@ namespace BH.Engine.Representation
 
                 if (extrusion.Curve.IIsClosed() && extrusion.Capped)
                 {
-                    // Needs appropriate meshing method for caps
-                    BH.Engine.Reflection.Compute.RecordNote("Mesh of Extrusion caps still not implemented");
+                    Polyline bottomBoundary = extrusion.Curve.IRationalise(renderMeshOptions);
+
+                    if (bottomBoundary == null)
+                        Reflection.Compute.RecordNote("Mesh of Extrusion caps still not implemented for extrusion defined with a curve of this type.");
+                    else
+                    {
+                        bottomCap = Create.PlanarSurface(bottomBoundary).RenderMesh(renderMeshOptions);
+
+                        Polyline topBoundary = bottomBoundary.Translate(extrusion.Direction);
+                        topCap = Create.PlanarSurface(topBoundary).RenderMesh(renderMeshOptions);
+                    }
                 }
 
-                return new RenderMesh() { Vertices = points.Select(pt => (Vertex)pt).ToList(), Faces = faces };
+                RenderMesh renderMesh = new RenderMesh() { Vertices = points.Select(pt => (Vertex)pt).ToList(), Faces = faces };
+
+                if (bottomCap != null)
+                    renderMesh = renderMesh.JoinRenderMeshes(bottomCap);
+
+                if (topCap != null)
+                    renderMesh = renderMesh.JoinRenderMeshes(topCap);
+
+                return renderMesh;
             }
 
             BH.Engine.Reflection.Compute.RecordError($"Calling RenderMesh for {nameof(Extrusion)} currently works only if the {nameof(Extrusion.Curve)} is composed of linear segments.");

@@ -37,7 +37,7 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        [Description("Rationalises the Polycurve into a Polyline. Currently limited functionality (Arcs, or Polycurves of already linear segments).")]
+        [Description("Rationalises the Polycurve into a Polyline. Currently limited functionality.")]
         public static Polyline Rationalise(this PolyCurve curve, RenderMeshOptions renderMeshOptions = null, int minSubdivisions = 3)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
@@ -86,7 +86,13 @@ namespace BH.Engine.Representation
             else
             {
                 // If not, subdivide the arc.
-                int numSubdvision = (int)(Math.Ceiling(Math.Abs(arc.StartAngle - 1.5708) / 1.5708) * renderMeshOptions.Element1DRefinement);
+                double arcAngle = Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle));
+                int numSubdvision = (int)(Math.Ceiling(1.5708 / (arcAngle - 1.5708)) * renderMeshOptions.Element1DRefinement) - 1;
+
+                // Scale the number of subdivisions based on the Options
+                numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
+
+                // Check the number of subdivisions is over the minimum acceptable
                 numSubdvision = numSubdvision < minSubdivisions ? minSubdivisions : numSubdvision;
 
                 List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
@@ -110,7 +116,12 @@ namespace BH.Engine.Representation
 
             // Subdivide the circle.
             // Empyrical formula to extract a reasonable amount of segments
-            int numSubdvision = (int)(Math.Ceiling(circle.Radius * 60) * renderMeshOptions.Element1DRefinement);
+            int numSubdvision = (int)(Math.Ceiling(circle.Radius * 10) * renderMeshOptions.Element1DRefinement);
+
+            // Scale the number of subdivisions based on the Options
+            numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
+            
+            // Check the number of subdivisions is over the minimum acceptable
             numSubdvision = numSubdvision < minSubdivisions ? minSubdivisions : numSubdvision;
 
             List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();

@@ -29,16 +29,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
-
+using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
+        [Description("Returns the geometrical representation of the point, which is a Sphere.")] // in the future, we might want an option to choose between sphere / box.
         public static IGeometry GeometricalRepresentation(this Point point, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
             if (isSubObject) // if it is a property of another object (e.g. a Line) do not display its endpoints.

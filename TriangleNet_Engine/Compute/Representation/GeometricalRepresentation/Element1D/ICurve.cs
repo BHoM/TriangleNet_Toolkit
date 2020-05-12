@@ -35,11 +35,7 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
-        [Description("Returns the piped curve.")]
+        [Description("Returns the geometrical representation of the curve, which is a Pipe.")] // the pipe radius corresponds to how big the Curve is when represented.
         public static IGeometry GeometricalRepresentation(this ICurve curve, RepresentationOptions reprOptions = null)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
