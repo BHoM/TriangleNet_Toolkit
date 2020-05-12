@@ -87,7 +87,7 @@ namespace BH.Engine.Representation
             {
                 // If not, subdivide the arc.
                 double arcAngle = Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle));
-                int numSubdvision = (int)(Math.Ceiling(1.5708 / (arcAngle - 1.5708)) * renderMeshOptions.Element1DRefinement) - 1;
+                int numSubdvision = (int)Math.Abs(Math.Ceiling(1.5708 / (arcAngle - 1.5708)) * renderMeshOptions.Element1DRefinement) - 1;
 
                 // Scale the number of subdivisions based on the Options
                 numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
@@ -98,6 +98,8 @@ namespace BH.Engine.Representation
                 List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
 
                 controlPoints.AddRange(pointParams.Select(par => arc.IPointAtParameter(par)));
+
+                controlPoints.Add(arc.IEndPoint());
             }
 
             polyline.ControlPoints = controlPoints;
