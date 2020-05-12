@@ -63,6 +63,16 @@ namespace BH.Engine.Representation
         }
 
         /***************************************************/
+
+        [Description("Joins multiple RenderMeshes into a single one. Currently this does not optimise for duplicate vertices.")]
+        public static RenderMesh JoinRenderMeshes(this RenderMesh a, RenderMesh b)
+        {
+            List<RenderMesh> renderMeshes = new List<RenderMesh>();
+            renderMeshes.Add(a);
+            renderMeshes.Add(b);
+
+            return renderMeshes.JoinRenderMeshes();
+        }
     }
 }
 

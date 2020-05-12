@@ -38,15 +38,20 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Bar bar, RenderMeshOptions renderMeshOptions = null)
+        public static IGeometry GeometricalRepresentation(this Bar bar, RepresentationOptions reprOptions = null)
         {
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            reprOptions = reprOptions ?? new RepresentationOptions();
 
-            return bar.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).IRenderMesh(renderMeshOptions);
+            if (!reprOptions.Detailed1DElements)
+                return bar.Centreline(); //returns the piped centreline.
+            else
+            {
+                // Gets the BH.oM.Geometry.Extrusion out of the Bar. If the profile is made of two curves (e.g. I section), selects only the outermost.
+                Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
+                barOutermostExtrusion.Capped = reprOptions.Cap1DElements;
+
+                return barOutermostExtrusion;
+            }
         }
     }
 }

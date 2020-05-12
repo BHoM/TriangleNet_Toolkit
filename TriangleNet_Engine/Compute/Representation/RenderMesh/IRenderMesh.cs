@@ -54,7 +54,7 @@ namespace BH.Engine.Representation
             IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
 
             if (geomRepr == null)
-                return null;
+                return null; // Could not compute the geometrical representation for that object.
 
             RenderMesh renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
 

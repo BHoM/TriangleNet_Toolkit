@@ -39,21 +39,15 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        [Description("Rationalises the arc into a Polyline, then returns the renderMesh of the polyline.")]
+        [Description("Attempts to rationalise the curve into a Polyline; if successful, it pipes the polyline and returns the meshed pipe.")]
         public static BH.oM.Graphics.RenderMesh RenderMesh(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            Polyline polyline = null;
+            Polyline polyline = curve.IRationalise(renderMeshOptions);
 
-            // If it's a Line or a Polyline, no need for rationalisation.
-            if (curve is Polyline || curve is Line)
-                return curve.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
-
-            // Else, try rationalising the curve.
-            polyline = IRationalise(curve, renderMeshOptions);
             if (polyline != null)
-                return polyline.RenderMesh(renderMeshOptions);
+                return polyline.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
 
             return null;
         }

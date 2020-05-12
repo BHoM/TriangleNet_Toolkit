@@ -72,6 +72,9 @@ namespace BH.Engine.Representation
                 return RenderMesh(extr, renderMeshOptions);
             }
 
+            if (centrePolyline == null)
+                centrePolyline = pipe.Centreline.IRationalise(renderMeshOptions); // Try rationalising the Curve
+
             if (centrePolyline != null)
             {
                 RenderMesh unifiedMesh = new RenderMesh();
