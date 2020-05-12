@@ -93,11 +93,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compute\DelaunayTriangulation.cs" />
-    <Compile Include="Compute\Representation\GeomRepresentation\Element0D\Point.cs" />
-    <Compile Include="Compute\Representation\GeomRepresentation\Element0D\Node.cs" />
-    <Compile Include="Compute\Representation\GeomRepresentation\Element1D\ICurve.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Point.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Node.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element0D\Node.cs" />
-    <Compile Include="Compute\Representation\GeomRepresentation\Element1D\Bar.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\Bar.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Bar.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Line.cs" />
@@ -115,15 +115,15 @@
     <Compile Include="Compute\Representation\RenderMesh\IRenderMesh.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\CompositeGeometry.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\Utilities.cs" />
-    <Compile Include="Compute\Representation\GeomRepresentation\IGeometricalRepresentation.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\IGeometricalRepresentation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Compute\Representation\GeomRepresentation\Element2D\" />
-    <Folder Include="Compute\Representation\GeomRepresentation\Element3D\" />
+    <Folder Include="Compute\Representation\GeometricalRepresentation\Element2D\" />
+    <Folder Include="Compute\Representation\GeometricalRepresentation\Element3D\" />
     <Folder Include="Compute\Representation\RenderMesh\Element2D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
