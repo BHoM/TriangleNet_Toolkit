@@ -101,6 +101,7 @@
     <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Bar.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Line.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\Element2D\PlanarSurface.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\Polyline.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\BoundingBox.cs" />
