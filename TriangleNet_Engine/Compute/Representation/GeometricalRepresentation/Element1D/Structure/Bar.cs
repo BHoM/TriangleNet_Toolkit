@@ -38,6 +38,7 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
+        [Description("Returns the geometrical representation of the Bar. It can be as simple as its Centreline, or an Extrusion obtained from its Cross Section.")]
         public static IGeometry GeometricalRepresentation(this Bar bar, RepresentationOptions reprOptions = null)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
