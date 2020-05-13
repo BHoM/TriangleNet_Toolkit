@@ -43,14 +43,14 @@ namespace BH.Engine.Representation
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            Polyline externalBoundary = planarSurface.ExternalBoundary as Polyline;
+            Polyline externalBoundary = planarSurface.ExternalBoundary.IRationalise(renderMeshOptions);
             if (externalBoundary == null)
             {
                 BH.Engine.Reflection.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if the {nameof(planarSurface.ExternalBoundary)} is of type {nameof(Polyline)}");
                 return null;
             }
 
-            List<Polyline> internalBoundaries = planarSurface.InternalBoundaries.OfType<Polyline>().ToList();
+            List<Polyline> internalBoundaries = planarSurface.InternalBoundaries.Select(c => c.IRationalise(renderMeshOptions)).ToList();
 
             if (internalBoundaries.Count != internalBoundaries.Count)
             {
