@@ -81,7 +81,9 @@ namespace BH.Engine.Representation
 
             List<Point> controlPoints = new List<Point> { arc.IStartPoint() };
 
-            double minRadiusForSubdivision = 0.01;
+            double arcAngle = Math.Round(Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle)), 4);
+
+            double minRadiusForSubdivision = 0.02;
             double minAngleForSubdivision = 0.1;
 
             if (renderMeshOptions.RepresentationOptions.Detailed1DElements)
@@ -90,7 +92,6 @@ namespace BH.Engine.Representation
                 minAngleForSubdivision = minAngleForSubdivision / renderMeshOptions.Element1DRefinement;
             }
 
-            double arcAngle = Math.Round(Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle)), 4);
 
             if (arc.Radius < minRadiusForSubdivision || arcAngle < minAngleForSubdivision) // a very small arc should not be subdivided.
                 controlPoints.Add(arc.IEndPoint());
