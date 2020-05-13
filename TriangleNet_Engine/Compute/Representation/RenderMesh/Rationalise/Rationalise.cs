@@ -81,13 +81,23 @@ namespace BH.Engine.Representation
 
             List<Point> controlPoints = new List<Point> { arc.IStartPoint() };
 
-            if (arc.Radius < 0.01 && Math.Abs(arc.StartAngle - 1.5708) < 0.1)
+            double minRadiusForSubdivision = 0.01;
+            double minAngleForSubdivision = 0.1;
+
+            if (renderMeshOptions.RepresentationOptions.Detailed1DElements)
+            {
+                minRadiusForSubdivision = minRadiusForSubdivision / renderMeshOptions.Element1DRefinement;
+                minAngleForSubdivision = minAngleForSubdivision / renderMeshOptions.Element1DRefinement;
+            }
+
+            double arcAngle = Math.Round(Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle)), 4);
+
+            if (arc.Radius < minRadiusForSubdivision || arcAngle < minAngleForSubdivision) // a very small arc should not be subdivided.
                 controlPoints.Add(arc.IEndPoint());
             else
             {
                 // If not, subdivide the arc.
-                double arcAngle = Math.Abs(Math.Abs(arc.StartAngle - arc.EndAngle));
-                int numSubdvision = (int)Math.Abs(Math.Ceiling(1.5708 / (arcAngle - 1.5708)) * renderMeshOptions.Element1DRefinement) - 1;
+                int numSubdvision = (int)Math.Abs(Math.Ceiling(1.5708 / (arcAngle) * renderMeshOptions.Element1DRefinement) - 1);
 
                 // Scale the number of subdivisions based on the Options
                 numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
@@ -116,15 +126,20 @@ namespace BH.Engine.Representation
 
             List<Point> controlPoints = new List<Point> { circle.IStartPoint() };
 
+
+
             // Subdivide the circle.
             // Empyrical formula to extract a reasonable amount of segments
             int numSubdvision = (int)(Math.Ceiling(circle.Radius * 10) * renderMeshOptions.Element1DRefinement);
 
             // Scale the number of subdivisions based on the Options
             numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
-            
+
             // Check the number of subdivisions is over the minimum acceptable
             numSubdvision = numSubdvision < minSubdivisions ? minSubdivisions : numSubdvision;
+
+            if (renderMeshOptions.RepresentationOptions.Detailed1DElements)
+                numSubdvision = (int)(Math.Ceiling(numSubdvision * 2f));
 
             List<double> pointParams = Enumerable.Range(0, numSubdvision).Select(i => (double)((double)i / (double)numSubdvision)).ToList();
             pointParams.Add(1);
