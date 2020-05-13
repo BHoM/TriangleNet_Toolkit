@@ -63,8 +63,9 @@ namespace BH.Engine.Representation
                 geometricalRepresentation = BH.Engine.Base.Query.IGeometry(bHoMObject);
 
             // - Empty CompositeGeometries must not be considered valid.
-            if (geometricalRepresentation != null && (geometricalRepresentation as CompositeGeometry).Elements.Count < 1)
-                geometricalRepresentation = null;
+            if (geometricalRepresentation != null)
+                if (geometricalRepresentation is CompositeGeometry && (geometricalRepresentation as CompositeGeometry).Elements.Count < 1)
+                    geometricalRepresentation = null;
 
             // - This is where our BH.Engine.RecordError loses against Exceptions.
             // - Using Exception throwing, I could make sure that: if this method is used "alone" as in a script component, I throw an error;
