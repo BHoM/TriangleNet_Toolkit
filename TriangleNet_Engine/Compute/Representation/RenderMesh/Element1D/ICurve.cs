@@ -47,7 +47,7 @@ namespace BH.Engine.Representation
             Polyline polyline = curve.IRationalise(renderMeshOptions);
 
             if (polyline != null)
-                return polyline.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).RenderMesh(renderMeshOptions);
+                return polyline.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).IRenderMesh(renderMeshOptions);
 
             return null;
         }
