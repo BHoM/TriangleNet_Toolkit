@@ -107,6 +107,7 @@
     <Compile Include="Compute\Representation\GeometricalRepresentation\Element2D\Structure\Panel.cs" />
     <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\Structure\Bar.cs" />
+    <Compile Include="Compute\Representation\GeometricalRepresentation\CustomObject.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element2D\PlanarSurface.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
