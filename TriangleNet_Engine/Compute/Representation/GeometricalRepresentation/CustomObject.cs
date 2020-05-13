@@ -23,38 +23,32 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
+using BH.oM.Base;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
-        [Description("Rationalises the Curve into a Polyline.")]
-        public static Polyline IRationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
+        // Required because of weird behaviour of IGeometry() on CustomObjects. See below.
+        private static IGeometry GeometricalRepresentation(this CustomObject obj, RepresentationOptions reprOptions = null)
         {
-            if (curve is Polyline) // no need to rationalise
-                return curve as Polyline;
+            IGeometry geometricalRepresentation = null;
 
-            if (curve is Line) // no need to rationalise
-                return new Polyline() { ControlPoints = (curve as Line).ControlPoints() };
+            if (obj != null)
+                geometricalRepresentation = BH.Engine.Base.Query.IGeometry(obj);
 
-            return Rationalise(curve as dynamic, renderMeshOptions);
-        }
+            // Weirdly, by default, IGeometry() on a CustomObject always returns an empty CompositeGeometry.
+            // This would generate a lot of needed checks downhill; so instead, return null.
+            if (geometricalRepresentation != null && (geometricalRepresentation as CompositeGeometry).Elements.Count < 1)
+                geometricalRepresentation = null;
 
-        // Fallback
-        private static Polyline Rationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
-        {
-            BH.Engine.Reflection.Compute.RecordError($"Could not find a method to rationalise the curve {curve.GetType().Name}. Currently support only Arc and Circle.");
-            return null;
+            return geometricalRepresentation;
         }
     }
 }
-

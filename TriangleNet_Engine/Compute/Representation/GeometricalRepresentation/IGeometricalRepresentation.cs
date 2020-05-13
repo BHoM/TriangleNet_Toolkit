@@ -47,23 +47,31 @@ namespace BH.Engine.Representation
 
             IGeometry geometricalRepresentation = null;
 
-            // First check if there is a specific GeometricalRepresentation method for the IObject.
+            // - First check if there is a specific GeometricalRepresentation method for the IObject.
             geometricalRepresentation = GeometricalRepresentation(obj as dynamic, reprOptions);
             if (geometricalRepresentation != null)
                 return geometricalRepresentation;
 
-            // If not, check if the object is a IGeometry, and if it is return itself.
+            // - If not, check if the object is a IGeometry, and if it is return itself.
             geometricalRepresentation = obj as IGeometry;
             if (geometricalRepresentation != null)
                 return geometricalRepresentation;
 
-            // If not, check if the object is a IBHoMObject whose IGeometry can be returned.
+            // - If not, check if the object is a IBHoMObject whose IGeometry can be returned.
             IBHoMObject bHoMObject = obj as IBHoMObject;
             if (bHoMObject != null)
                 geometricalRepresentation = BH.Engine.Base.Query.IGeometry(bHoMObject);
 
-            if (geometricalRepresentation == null)
-                BH.Engine.Reflection.Compute.RecordError($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}");
+            // - Empty CompositeGeometries must not be considered valid.
+            if (geometricalRepresentation != null && (geometricalRepresentation as CompositeGeometry).Elements.Count < 1)
+                geometricalRepresentation = null;
+
+            // - This is where our BH.Engine.RecordError loses against Exceptions.
+            // - Using Exception throwing, I could make sure that: if this method is used "alone" as in a script component, I throw an error;
+            // - if this method is called within another method, I catch the Exception and decide whether to return it based on the context.
+            // - e.g. I'd like this in Speckle_Toolkit, SpeckleRepresentation.cs, line 104.
+            //if (geometricalRepresentation == null & !(obj is CustomObject)) // do not throw error for CustomObjects.
+            //    BH.Engine.Reflection.Compute.RecordError($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}");
 
             return geometricalRepresentation;
         }
