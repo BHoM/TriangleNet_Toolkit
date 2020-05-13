@@ -57,8 +57,11 @@ namespace BH.Engine.Representation
                 Vector translateVect = new Vector() { Z = -thickness / 2 };
                 Vector extrudeVect = new Vector() { Z = thickness };
 
-                PlanarSurface topSrf = centralPlanarSurface.ITranslate(new Vector() { Z = thickness / 2 }) as PlanarSurface;
-                PlanarSurface botSrf = centralPlanarSurface.ITranslate(new Vector() { Z = -thickness / 2 }) as PlanarSurface;
+                Vector upHalf = new Vector() { X = 0, Y = 0, Z = thickness / 2 };
+                Vector downHalf = new Vector() { X = 0, Y = 0, Z = -thickness / 2 };
+
+                PlanarSurface topSrf = centralPlanarSurface.ITranslate(upHalf) as PlanarSurface;
+                PlanarSurface botSrf = centralPlanarSurface.ITranslate(downHalf) as PlanarSurface;
 
                 IEnumerable<ICurve> internalEdgesBot = panel.InternalEdgeCurves().Select(c => c.ITranslate(translateVect));
                 IEnumerable<Extrusion> internalEdgesExtrusions = internalEdgesBot.Select(c => BH.Engine.Geometry.Create.Extrusion(c, extrudeVect));

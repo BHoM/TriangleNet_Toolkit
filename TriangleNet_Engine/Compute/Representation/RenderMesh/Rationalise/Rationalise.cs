@@ -92,13 +92,14 @@ namespace BH.Engine.Representation
                 minAngleForSubdivision = minAngleForSubdivision / renderMeshOptions.Element1DRefinement;
             }
 
+            double length = arc.Length();
 
             if (arc.Radius < minRadiusForSubdivision || arcAngle < minAngleForSubdivision) // a very small arc should not be subdivided.
                 controlPoints.Add(arc.IEndPoint());
             else
             {
                 // If not, subdivide the arc.
-                int numSubdvision = (int)Math.Abs(Math.Ceiling(1.5708 / (arcAngle) * renderMeshOptions.Element1DRefinement) - 1);
+                int numSubdvision = (int)Math.Abs(Math.Ceiling(1.5708 / (arcAngle) * renderMeshOptions.Element1DRefinement * length/2) - 1);
 
                 // Scale the number of subdivisions based on the Options
                 numSubdvision = (int)Math.Ceiling(numSubdvision * renderMeshOptions.Element1DRefinement);
@@ -126,8 +127,6 @@ namespace BH.Engine.Representation
             Polyline polyline = new Polyline();
 
             List<Point> controlPoints = new List<Point> { circle.IStartPoint() };
-
-
 
             // Subdivide the circle.
             // Empyrical formula to extract a reasonable amount of segments
