@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BH.Engine.Geometry;
+using BH.oM.Quantities.Attributes;
 
 using System.ComponentModel;
 
@@ -38,8 +39,14 @@ namespace BH.Engine.Geometry.Triangulation
         /****      public Methods                       ****/
         /***************************************************/
 
-        public static List<Polyline> VoronoiRegions(List<Point> points, double tolerance = Tolerance.Distance)
+        [Description("Creates a voronoi diagram from a list of coplanar points. The returned polylines cells will correspond to the input points by index.")]
+        [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
+        [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For Colinear points, no plane can be fitted, and an xy plane will be assumed.")]
+        [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
+        [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
+        public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double tolerance = Tolerance.Distance)
         {
+
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 3)
             {
@@ -49,12 +56,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (points.IsCollinear(tolerance))
             {
-                Reflection.Compute.RecordError("Points are colinear and can not be triangulated.");
-                return new List<Polyline>();
+                return ColinearVoronoiRegions(points, plane, tolerance);
             }
 
             //Try fit plane if no is provided
-            Plane plane = points.FitPlane(tolerance);
+            if (plane == null)
+            {
+                plane = points.FitPlane(tolerance);
+            }
 
             if (plane == null)
             {
@@ -65,7 +74,7 @@ namespace BH.Engine.Geometry.Triangulation
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points!");
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane!");
                 return new List<Polyline>();
             }
 
@@ -107,6 +116,7 @@ namespace BH.Engine.Geometry.Triangulation
 
             // Convert regions to BHoMGeometry. Skip the last 4 faces as they correspond to the added boundary points.
             List<Polyline> translatedPolylines = new List<Polyline>();
+            double sqTol = tolerance * tolerance;
             for (int i = 0; i < voronoi.Faces.Count-4; i++)
             {
                 var face = voronoi.Faces[i];
@@ -124,7 +134,11 @@ namespace BH.Engine.Geometry.Triangulation
                     do
                     {
                         visitedIds.Add(halfEdge.ID);
-                        pts.Add(new Point { X = halfEdge.Origin.X, Y = halfEdge.Origin.Y });
+                        Point pt = new Point { X = halfEdge.Origin.X, Y = halfEdge.Origin.Y };
+                        //Make sure two of the same points are not added. This could maybe be done in a more cleaver way with the half edge
+                        if(pts.Count == 0 || pt.SquareDistance(pts.Last()) > sqTol)
+                            pts.Add(pt);
+
                         halfEdge = halfEdge.Next;
 
                         if (halfEdge == null)
@@ -134,8 +148,9 @@ namespace BH.Engine.Geometry.Triangulation
                         counter++;
                     } while (!visitedIds.Contains(nextId) && counter < bailOut);
 
+                    if(pts.Count > 0 && pts.First().SquareDistance(pts.Last()) > sqTol)
+                        pts.Add(pts.First());
 
-                    pts.Add(pts.First());
                     translatedPolylines.Add(BH.Engine.Geometry.Create.Polyline(pts));
                 }
                 catch (Exception)
@@ -153,8 +168,9 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
-        public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves, double tolerance = Tolerance.Distance)
+        public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double tolerance = Tolerance.Distance)
         {
+            openingCurves = openingCurves ?? new List<ICurve>();
 
             List<Point> checkingPoints = new List<Point>(points);
             checkingPoints.AddRange(boundaryCurve.IControlPoints());
@@ -166,7 +182,7 @@ namespace BH.Engine.Geometry.Triangulation
                 return new List<List<PolyCurve>>();
             }
 
-            List<Polyline> untrimmedRegions = VoronoiRegions(points, tolerance);
+            List<Polyline> untrimmedRegions = VoronoiRegions(points, plane, tolerance);
 
             List<List<PolyCurve>> boundaryTrimmedCurves = untrimmedRegions.Select(x => x.BooleanIntersection(boundaryCurve, tolerance)).ToList();
 
@@ -185,6 +201,77 @@ namespace BH.Engine.Geometry.Triangulation
 
             return trimmedCurves;
         }
+
+        /***************************************************/
+        /****      Private Methods                       ****/
+        /***************************************************/
+
+        private static List<Polyline> ColinearVoronoiRegions(List<Point> points, Plane plane, double tolerance)
+        {
+            List<Point> sorted = points.SortCollinear();
+            Vector tan = sorted.Last() - sorted.First();
+            if (plane == null)
+            {
+                Vector y = Vector.ZAxis.CrossProduct(tan);
+                Vector normal = tan.CrossProduct(y).Normalise();
+                plane = new Plane() { Origin = sorted.First(), Normal = normal };
+            }
+
+            //Check all points within distance of the plane
+            if (points.Any(x => x.Distance(plane) > tolerance))
+            {
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane!");
+                return new List<Polyline>();
+            }
+
+            Vector perp = plane.Normal.CrossProduct(tan).Normalise();
+            double length = tan.Length() / 2;
+
+            perp *= length;
+
+            List<Point> divPts = new List<Point>();
+
+            //Find average points
+            for (int i = 0; i < sorted.Count - 1; i++)
+            {
+                Point mid = (sorted[i] + sorted[i + 1]) / 2;
+                divPts.Add(mid);
+            }
+
+            List<Polyline> regions = new List<Polyline>();
+
+            //Create the first region
+            Point p1 = divPts.First() - tan;
+            Point p2 = divPts.First();
+            regions.Add(CreateRegion(p1, p2, perp));
+
+            //Create central regions
+            for (int i = 0; i < divPts.Count-1; i++)
+            {
+                regions.Add(CreateRegion(divPts[i], divPts[i + 1], perp));
+            }
+
+            //Create last region
+            p1 = divPts.Last();
+            p2 = divPts.Last() + tan;
+            regions.Add(CreateRegion(p1, p2, perp));
+
+            return regions;
+        }
+
+        /***************************************************/
+
+        private static Polyline CreateRegion(Point mid1, Point mid2, Vector perp)
+        {
+            Point p1 = mid1 + perp;
+            Point p2 = mid1 - perp;
+            Point p3 = mid2 - perp;
+            Point p4 = mid2 + perp;
+
+            List<Point> pts = new List<Point> { p1, p2, p3, p4, p1 };
+            return new Polyline { ControlPoints = pts };
+        }
+
         /***************************************************/
     }
 }
