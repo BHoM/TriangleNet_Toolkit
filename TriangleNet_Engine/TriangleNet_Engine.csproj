@@ -124,6 +124,7 @@
     <Compile Include="Compute\Representation\RenderMesh\Other\CompositeGeometry.cs" />
     <Compile Include="Compute\Representation\RenderMesh\Other\Utilities.cs" />
     <Compile Include="Compute\Representation\GeometricalRepresentation\IGeometricalRepresentation.cs" />
+    <Compile Include="Compute\VoronoiRegions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
