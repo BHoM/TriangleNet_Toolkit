@@ -21,10 +21,12 @@
  */
 
 using BH.oM.Geometry;
+using BH.oM.Geometry.CoordinateSystem;
 using BH.oM.Reflection.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BH.Engine.Geometry;
 
 using System.ComponentModel;
 
@@ -136,6 +138,88 @@ namespace BH.Engine.Geometry.Triangulation
 
             return meshPolylines;
         }
+
+        /***************************************************/
+
+        public static List<Polyline> DelaunayTriangulation(List<Point> points, Plane plane = null, double tolerance = Tolerance.Distance)
+        {
+            //Preform check all inputs that triangulation can be done
+            if (points == null || points.Count < 3)
+            {
+                Reflection.Compute.RecordError("Insuffient points for triangulation. Please provide at least 3 Points!");
+                return new List<Polyline>();
+            }
+
+            if (points.IsCollinear(tolerance))
+            {
+                Reflection.Compute.RecordError("Points are colinear and can not be triangulated.");
+                return new List<Polyline>();
+            }
+
+            //Basic edge case, simply create a triangle
+            if (points.Count == 3)
+            {
+                Polyline pLine = new Polyline { ControlPoints = points };
+                pLine.ControlPoints.Add(points[0]);
+                return new List<Polyline> { pLine };
+            }
+
+            //Try fit plane if no is provided
+            if (plane == null)
+            {
+                plane = points.FitPlane(tolerance);
+            }
+
+            if (plane == null)
+            {
+                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points.");
+                return new List<Polyline>();
+            }
+
+            //Check all points within distance of the plane
+            if(points.Any(x => x.Distance(plane) > tolerance))
+            {
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points!");
+                return new List<Polyline>();
+            }
+
+            //Calculate the local coordinates
+            Vector localX = points[1] - points[0];
+            Vector localY = plane.Normal.CrossProduct(localX);
+            Point min = points.Min();
+            Point refPt = new Point { X = min.X, Y = min.Y };
+            Cartesian localSystem = Create.CartesianCoordinateSystem(min, localX, localY);
+            Cartesian globalSystem = Create.CartesianCoordinateSystem(refPt, Vector.XAxis, Vector.YAxis);
+
+            //Transform to xy-plane
+            List<Point> xyPoints = points.Select(x => x.Orient(localSystem, globalSystem)).ToList();
+
+            //Convert to TringleNet vertecies
+            List<TriangleNet.Geometry.Vertex> vertecies = xyPoints.Select(p => new TriangleNet.Geometry.Vertex(p.X, p.Y)).ToList();
+
+            // Triangulate
+            TriangleNet.Meshing.ITriangulator triangulator = new TriangleNet.Meshing.Algorithm.Dwyer();
+            TriangleNet.Configuration config = new TriangleNet.Configuration();
+            TriangleNet.Mesh mesh = (TriangleNet.Mesh)triangulator.Triangulate(vertecies, config);
+
+            // Convert triangulations back to BHoM geometry
+            List<Polyline> translatedPolylines = new List<Polyline>();
+            foreach (var face in mesh.Triangles)
+            {
+                // List points defining the triangle
+                List<Point> pts = new List<Point>();
+                pts.Add(BH.Engine.Geometry.Create.Point(face.GetVertex(0).X, face.GetVertex(0).Y));
+                pts.Add(BH.Engine.Geometry.Create.Point(face.GetVertex(1).X, face.GetVertex(1).Y));
+                pts.Add(BH.Engine.Geometry.Create.Point(face.GetVertex(2).X, face.GetVertex(2).Y));
+                pts.Add(pts.First());
+                translatedPolylines.Add(BH.Engine.Geometry.Create.Polyline(pts));
+            }
+
+            return translatedPolylines.Select(x => x.Orient(globalSystem, localSystem)).ToList();
+        }
+
+
+        /***************************************************/
     }
 }
 
