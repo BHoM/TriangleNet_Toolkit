@@ -41,7 +41,7 @@ namespace BH.Engine.Geometry.Triangulation
 
         [Description("Creates a voronoi diagram from a list of coplanar points. The returned polylines cells will correspond to the input points by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
-        [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For Colinear points, no plane can be fitted, and an xy plane will be assumed.")]
+        [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double tolerance = Tolerance.Distance)
@@ -168,6 +168,13 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
+        [Description("Creates a voronoi diagram from a list of coplanar points and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points by index.")]
+        [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
+        [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points.")]
+        [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points.")]
+        [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
+        [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
+        [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double tolerance = Tolerance.Distance)
         {
             openingCurves = openingCurves ?? new List<ICurve>();
@@ -206,6 +213,7 @@ namespace BH.Engine.Geometry.Triangulation
         /****      Private Methods                       ****/
         /***************************************************/
 
+        [Description("Creates a set of voronoi cells from a list of colinear points. Requires the incoming points to be colinear to work.")]
         private static List<Polyline> ColinearVoronoiRegions(List<Point> points, Plane plane, double tolerance)
         {
             List<Point> sorted = points.SortCollinear();
@@ -256,7 +264,16 @@ namespace BH.Engine.Geometry.Triangulation
             p2 = divPts.Last() + tan;
             regions.Add(CreateRegion(p1, p2, perp));
 
-            return regions;
+            //Sort back to follow original list
+            Polyline[] sortedRegions = new Polyline[regions.Count];
+
+            for (int i = 0; i < regions.Count; i++)
+            {
+                int index = points.IndexOf(sorted[i]);
+                sortedRegions[index] = regions[i];
+            }
+
+            return sortedRegions.ToList();
         }
 
         /***************************************************/
