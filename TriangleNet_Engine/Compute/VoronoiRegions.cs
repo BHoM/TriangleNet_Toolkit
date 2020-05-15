@@ -49,12 +49,13 @@ namespace BH.Engine.Geometry.Triangulation
         {
 
             //Preform check all inputs that triangulation can be done
-            if (points == null || points.Count < 3)
+            if (points == null || points.Count < 2)
             {
-                Reflection.Compute.RecordError("Insuffient points for triangulation. Please provide at least 3 Points!");
+                Reflection.Compute.RecordError("Insuffient points for generating the diagram. Please provide at least 2 Points.");
                 return new List<Polyline>();
             }
 
+            //Special case for colinear points. No need to triangulate
             if (points.IsCollinear(tolerance))
             {
                 return ColinearVoronoiRegions(points, plane, boundarySize, tolerance);
@@ -68,14 +69,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (plane == null)
             {
-                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points.");
+                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
                 return new List<Polyline>();
             }
 
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane!");
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
                 return new List<Polyline>();
             }
 
@@ -94,8 +95,10 @@ namespace BH.Engine.Geometry.Triangulation
             //Add point at all corners. This is to try to handle weirdness at the boundaries
             BoundingBox bounds = xyPoints.Bounds();
 
-            double lengthX, lengthY;
+            double lengthX;
+            double lengthY;
 
+            //If boundary size is or equal to 0, calculate based on the bounds
             if (boundarySize <= 0)
             {
                 lengthX = (bounds.Max.X - bounds.Min.X);
@@ -103,9 +106,11 @@ namespace BH.Engine.Geometry.Triangulation
             }
             else
             {
+                //if positive, use value provided
                 lengthX = boundarySize;
                 lengthY = boundarySize;
             }
+
             double minX = bounds.Min.X - lengthX;
             double minY = bounds.Min.Y - lengthY;
             double maxX = bounds.Max.X + lengthX;
@@ -126,9 +131,10 @@ namespace BH.Engine.Geometry.Triangulation
 
             TriangleNet.Voronoi.StandardVoronoi voronoi = new TriangleNet.Voronoi.StandardVoronoi(mesh);
 
-            // Convert regions to BHoMGeometry. Skip the last 4 faces as they correspond to the added boundary points.
             List<Polyline> translatedPolylines = new List<Polyline>();
             double sqTol = tolerance * tolerance;
+
+            // Convert regions to BHoMGeometry. Skip the last 4 faces as they correspond to the added boundary points.
             for (int i = 0; i < voronoi.Faces.Count-4; i++)
             {
                 var face = voronoi.Faces[i];
@@ -202,6 +208,12 @@ namespace BH.Engine.Geometry.Triangulation
                 return new List<List<PolyCurve>>();
             }
 
+            //Fit plane through boundary curve. This is to better support a linear array of points
+            if (plane == null)
+            {
+                plane = boundaryCurve.IFitPlane(tolerance);
+            }
+
             List<Polyline> untrimmedRegions = VoronoiRegions(points, plane, boundarySize, tolerance);
 
             List<List<PolyCurve>> boundaryTrimmedCurves = untrimmedRegions.Select(x => x.BooleanIntersection(boundaryCurve, tolerance)).ToList();
@@ -241,11 +253,13 @@ namespace BH.Engine.Geometry.Triangulation
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane!");
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane.");
                 return new List<Polyline>();
             }
 
             Vector perp = plane.Normal.CrossProduct(tan).Normalise();
+
+            //If boundary size is or equal to 0, calculate based on the bounds
             if (boundarySize <= 0)
             {
                 double length = tan.Length() / 2;
@@ -253,6 +267,7 @@ namespace BH.Engine.Geometry.Triangulation
             }
             else
             {
+                //if positive, use value provided
                 tan = tan.Normalise() * boundarySize;
                 perp *= boundarySize / 2;
             }
@@ -297,6 +312,7 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
+        [Description("Creates a closed polyline quad region with the width of 2 times perp length, along this vector, where the mid1 and mid2 points will be on the middle of the width edges.")]
         private static Polyline CreateRegion(Point mid1, Point mid2, Vector perp)
         {
             Point p1 = mid1 + perp;
