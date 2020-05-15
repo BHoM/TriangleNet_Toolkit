@@ -152,7 +152,7 @@ namespace BH.Engine.Geometry.Triangulation
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 3)
             {
-                Reflection.Compute.RecordError("Insuffient points for triangulation. Please provide at least 3 Points!");
+                Reflection.Compute.RecordError("Insufficient points for triangulation. Please provide at least 3 Points.");
                 return new List<Polyline>();
             }
 
@@ -178,14 +178,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (plane == null)
             {
-                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points.");
+                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
                 return new List<Polyline>();
             }
 
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points!");
+                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
                 return new List<Polyline>();
             }
 
