@@ -43,8 +43,9 @@ namespace BH.Engine.Geometry.Triangulation
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
+        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a zero or negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points.", typeof(Length))]
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
-        public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double tolerance = Tolerance.Distance)
+        public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
 
             //Preform check all inputs that triangulation can be done
@@ -56,7 +57,7 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (points.IsCollinear(tolerance))
             {
-                return ColinearVoronoiRegions(points, plane, tolerance);
+                return ColinearVoronoiRegions(points, plane, boundarySize, tolerance);
             }
 
             //Try fit plane if no is provided
@@ -90,10 +91,21 @@ namespace BH.Engine.Geometry.Triangulation
             List<Point> xyPoints = points.Select(x => x.Orient(localSystem, globalSystem)).ToList();
 
 
-            //Add point at all corners. This is to try to handle weirness at the boundaries
+            //Add point at all corners. This is to try to handle weirdness at the boundaries
             BoundingBox bounds = xyPoints.Bounds();
-            double lengthX = (bounds.Max.X - bounds.Min.X);
-            double lengthY = (bounds.Max.X - bounds.Min.X);
+
+            double lengthX, lengthY;
+
+            if (boundarySize <= 0)
+            {
+                lengthX = (bounds.Max.X - bounds.Min.X);
+                lengthY = (bounds.Max.X - bounds.Min.X);
+            }
+            else
+            {
+                lengthX = boundarySize;
+                lengthY = boundarySize;
+            }
             double minX = bounds.Min.X - lengthX;
             double minY = bounds.Min.Y - lengthY;
             double maxX = bounds.Max.X + lengthX;
@@ -173,9 +185,10 @@ namespace BH.Engine.Geometry.Triangulation
         [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points.")]
         [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
+        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points.", typeof(Length))]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
-        public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double tolerance = Tolerance.Distance)
+        public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
             openingCurves = openingCurves ?? new List<ICurve>();
 
@@ -189,7 +202,7 @@ namespace BH.Engine.Geometry.Triangulation
                 return new List<List<PolyCurve>>();
             }
 
-            List<Polyline> untrimmedRegions = VoronoiRegions(points, plane, tolerance);
+            List<Polyline> untrimmedRegions = VoronoiRegions(points, plane, boundarySize, tolerance);
 
             List<List<PolyCurve>> boundaryTrimmedCurves = untrimmedRegions.Select(x => x.BooleanIntersection(boundaryCurve, tolerance)).ToList();
 
@@ -214,7 +227,7 @@ namespace BH.Engine.Geometry.Triangulation
         /***************************************************/
 
         [Description("Creates a set of voronoi cells from a list of colinear points. Requires the incoming points to be colinear to work.")]
-        private static List<Polyline> ColinearVoronoiRegions(List<Point> points, Plane plane, double tolerance)
+        private static List<Polyline> ColinearVoronoiRegions(List<Point> points, Plane plane, double boundarySize, double tolerance)
         {
             List<Point> sorted = points.SortCollinear();
             Vector tan = sorted.Last() - sorted.First();
@@ -233,10 +246,16 @@ namespace BH.Engine.Geometry.Triangulation
             }
 
             Vector perp = plane.Normal.CrossProduct(tan).Normalise();
-            double length = tan.Length() / 2;
-
-            perp *= length;
-
+            if (boundarySize <= 0)
+            {
+                double length = tan.Length() / 2;
+                perp *= length;
+            }
+            else
+            {
+                tan = tan.Normalise() * boundarySize;
+                perp *= boundarySize / 2;
+            }
             List<Point> divPts = new List<Point>();
 
             //Find average points

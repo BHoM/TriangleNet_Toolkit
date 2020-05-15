@@ -26,6 +26,7 @@ using BH.oM.Reflection.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BH.oM.Quantities.Attributes;
 using BH.Engine.Geometry;
 
 using System.ComponentModel;
@@ -41,7 +42,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Description("Create a Delaunay mesh from an outline and holes")]
         [Input("outerCurve", "A BHoM Polyline representing the mesh boundary")]
         [Input("innerCurves", "A list of holes to \"punch\" through the mesh generated mesh")]
-        [Input("offsetDistance", "Offset distance for innerCurves which have coincident edges - needs to be a negative value for inwards based offsetting, default -0.001")]
+        [Input("offsetDistance", "Offset distance for innerCurves which have coincident edges - needs to be a negative value for inwards based offsetting, default -0.001", typeof(Length))]
         [Input("conformingDelaunay", "Choose whether or not to have the resulting triangulation conform to Delaunay principles. This will give a higher detail triangulation. Default true")]
         [Output("curve", "A list of BHoM Polylines")]
         public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null, double offsetDistance = -0.001, bool conformingDelaunay = true)
@@ -50,11 +51,11 @@ namespace BH.Engine.Geometry.Triangulation
             if (innerCurves == null) innerCurves = new List<Polyline>();
 
             double area = outerCurve.Area();
-            for(int x = 0; x < innerCurves.Count; x++)
+            for (int x = 0; x < innerCurves.Count; x++)
             {
                 Polyline pLine = outerCurve.BooleanDifference(new List<Polyline> { innerCurves[x] })[0];
 
-                if(pLine.Area() != area)
+                if (pLine.Area() != area)
                 {
                     //The boolean difference returned a different polyline - offset this inner curve
                     innerCurves[x] = innerCurves[x].Offset(offsetDistance);
@@ -141,6 +142,11 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
+        [Description("Creates a list of closed Delaunay polyline cells from a list of coplanar points. Each cell will correspond to a face in a Delaunay mesh.")]
+        [Input("points", "The points to connect to Delanuay cells. All points need to be coplanar ")]
+        [Input("plane", "Optional plane of the points. Needs to be coplanar with all of the points. If no plane is provided, a best fit plane through the points will be used.")]
+        [Input("tolerance", "Numeric tolerance to be used by the method.", typeof(Length))]
+        [Output("curves", "List of closed polyline representing faces in a Delaunay.")]
         public static List<Polyline> DelaunayTriangulation(List<Point> points, Plane plane = null, double tolerance = Tolerance.Distance)
         {
             //Preform check all inputs that triangulation can be done
@@ -177,7 +183,7 @@ namespace BH.Engine.Geometry.Triangulation
             }
 
             //Check all points within distance of the plane
-            if(points.Any(x => x.Distance(plane) > tolerance))
+            if (points.Any(x => x.Distance(plane) > tolerance))
             {
                 BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points!");
                 return new List<Polyline>();
