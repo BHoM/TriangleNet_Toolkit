@@ -29,7 +29,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
-
+using BH.Engine.Graphics;
+using System.ComponentModel;
 
 namespace BH.Engine.Representation
 {
@@ -42,6 +43,8 @@ namespace BH.Engine.Representation
         // Main interface method
         public static BH.oM.Graphics.RenderMesh IRenderMesh(this IObject obj, RenderMeshOptions renderMeshOptions = null)
         {
+            if (obj == null) return null;
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             if (obj is BH.oM.Graphics.RenderMesh)
