@@ -47,7 +47,7 @@ namespace BH.Engine.Representation
 
             // See if there is a custom BHoM mesh representation for this BHoMObject, before attempting the RenderMesh computation.
             if (obj is IBHoMObject)
-                if (TryGetRendermesh(obj as IBHoMObject, out renderMesh, renderMeshOptions.CustomRendermeshKey))
+                if (Query.TryGetRendermesh(obj as IBHoMObject, out renderMesh, renderMeshOptions.CustomRendermeshKey))
                     return renderMesh;
 
             if (obj is BH.oM.Graphics.RenderMesh)
@@ -55,12 +55,19 @@ namespace BH.Engine.Representation
 
             BH.oM.Geometry.Mesh mesh = obj as BH.oM.Geometry.Mesh;
             if (mesh != null)
-                return (RenderMesh)mesh;
+                return mesh.ToRenderMesh();
 
+            // If obj is of type IGeometry, we still need to compute its geometrical representation.
+            // E.g. A BH.oM.Geometry.Point can only be represented with a Sphere, a Pixel, a Voxel, etc.
             IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
 
-            if (geomRepr == null)
-                return null; // Could not compute the geometrical representation for that object.
+            if (geomRepr == null) // Could not compute the geometrical representation for that object.
+            {
+                // I need to throw the Error here instead than in IGeometricalRepresentation because we don't have Error catch.
+                // See comment in IGeometricalRepresentation().
+                BH.Engine.Reflection.Compute.RecordError($"Could not compute the GeometricalRepresentation for {obj.GetType().Name}");
+                return null; 
+            }
 
             renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
 
@@ -74,65 +81,6 @@ namespace BH.Engine.Representation
         private static BH.oM.Graphics.RenderMesh RenderMesh(this IGeometry geom, RenderMeshOptions renderMeshOptions = null)
         {
             return null;
-        }
-
-        [Description("Retrieves a representation from the specified IBHoMObject CustomData key, if present. Returns it as a RenderMesh.\n" +
-            "If the representation is stored as a BH.oM.Geometry.Mesh type, it's converted to a RenderMesh.\n" +
-            "If the CustomData contains a list of RenderMeshes or Meshes, they are joined together into a single RenderMesh.")]
-        public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh, string customDataKey = "RenderMesh")
-        {
-            if (string.IsNullOrWhiteSpace(customDataKey))
-            {
-                renderMesh = null;
-                return false;
-            }
-
-            renderMesh = null;
-
-            if (bHoMObject != null)
-            {
-                object renderMeshObj = null;
-                bHoMObject.CustomData.TryGetValue(customDataKey, out renderMeshObj);
-
-                if (renderMeshObj != null)
-                {
-                    renderMesh = renderMeshObj as RenderMesh;
-                    Mesh geomMesh = renderMeshObj as Mesh;
-
-                    if (renderMesh != null)
-                        return true;
-
-                    if (geomMesh != null)
-                    {
-                        renderMesh = geomMesh.ToRenderMesh();
-                        return true;
-                    }
-
-                    if (typeof(IEnumerable<object>).IsAssignableFrom(renderMeshObj.GetType()))
-                    {
-                        List<object> objects = renderMeshObj as List<object>;
-
-                        List<RenderMesh> renderMeshes = objects.OfType<RenderMesh>().ToList();
-                        List<Mesh> geomMeshes = objects.OfType<Mesh>().ToList();
-
-                        if (geomMeshes.Count > 0)
-                        {
-                            geomMesh = JoinMeshes(geomMeshes);
-                            renderMeshes.Add(geomMesh.ToRenderMesh());
-                        }
-
-                        if (renderMeshes.Count > 0)
-                            renderMesh = JoinRenderMeshes(renderMeshes);
-                    }
-
-                    if (renderMesh != null)
-                        return true;
-                    else
-                        return false;
-                }
-            }
-
-            return false;
         }
 
     }
