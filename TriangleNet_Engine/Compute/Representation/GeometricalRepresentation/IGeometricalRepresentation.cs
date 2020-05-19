@@ -71,8 +71,9 @@ namespace BH.Engine.Representation
 
             // - This is where our BH.Engine.RecordError loses against Exceptions.
             // - Using Exception throwing, I could make sure that: if this method is used "alone" as in a script component, I throw an error;
-            // - if this method is called within another method, I catch the Exception and decide whether to return it based on the context.
+            // - if this method is called within another method, I catch the Exception and decide whether to expose it based on the context.
             // - e.g. I'd like this in Speckle_Toolkit, SpeckleRepresentation.cs, line 104.
+
             //if (geometricalRepresentation == null & !(obj is CustomObject)) // do not throw error for CustomObjects.
             //    BH.Engine.Reflection.Compute.RecordError($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}");
 
