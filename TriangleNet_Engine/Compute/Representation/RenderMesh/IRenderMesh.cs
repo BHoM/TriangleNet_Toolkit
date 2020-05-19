@@ -36,16 +36,19 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
         // Main interface method
         public static BH.oM.Graphics.RenderMesh IRenderMesh(this IObject obj, RenderMeshOptions renderMeshOptions = null)
         {
             if (obj == null) return null;
 
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+
+            RenderMesh renderMesh = null;
+
+            // See if there is a custom BHoM mesh representation for this BHoMObject, before attempting the RenderMesh computation.
+            if (obj is IBHoMObject)
+                if (TryGetRendermesh(obj as IBHoMObject, out renderMesh, renderMeshOptions.CustomRendermeshKey))
+                    return renderMesh;
 
             if (obj is BH.oM.Graphics.RenderMesh)
                 return obj as BH.oM.Graphics.RenderMesh;
@@ -59,7 +62,7 @@ namespace BH.Engine.Representation
             if (geomRepr == null)
                 return null; // Could not compute the geometrical representation for that object.
 
-            RenderMesh renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
+            renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
 
             if (renderMesh == null)
                 BH.Engine.Reflection.Compute.RecordError($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}");
@@ -73,5 +76,64 @@ namespace BH.Engine.Representation
             return null;
         }
 
-    } 
+        [Description("Retrieves a representation from the specified IBHoMObject CustomData key, if present. Returns it as a RenderMesh.\n" +
+            "If the representation is stored as a BH.oM.Geometry.Mesh type, it's converted to a RenderMesh.\n" +
+            "If the CustomData contains a list of RenderMeshes or Meshes, they are joined together into a single RenderMesh.")]
+        public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh, string customDataKey = "RenderMesh")
+        {
+            if (string.IsNullOrWhiteSpace(customDataKey))
+            {
+                renderMesh = null;
+                return false;
+            }
+
+            renderMesh = null;
+
+            if (bHoMObject != null)
+            {
+                object renderMeshObj = null;
+                bHoMObject.CustomData.TryGetValue(customDataKey, out renderMeshObj);
+
+                if (renderMeshObj != null)
+                {
+                    renderMesh = renderMeshObj as RenderMesh;
+                    Mesh geomMesh = renderMeshObj as Mesh;
+
+                    if (renderMesh != null)
+                        return true;
+
+                    if (geomMesh != null)
+                    {
+                        renderMesh = geomMesh.ToRenderMesh();
+                        return true;
+                    }
+
+                    if (typeof(IEnumerable<object>).IsAssignableFrom(renderMeshObj.GetType()))
+                    {
+                        List<object> objects = renderMeshObj as List<object>;
+
+                        List<RenderMesh> renderMeshes = objects.OfType<RenderMesh>().ToList();
+                        List<Mesh> geomMeshes = objects.OfType<Mesh>().ToList();
+
+                        if (geomMeshes.Count > 0)
+                        {
+                            geomMesh = JoinMeshes(geomMeshes);
+                            renderMeshes.Add(geomMesh.ToRenderMesh());
+                        }
+
+                        if (renderMeshes.Count > 0)
+                            renderMesh = JoinRenderMeshes(renderMeshes);
+                    }
+
+                    if (renderMesh != null)
+                        return true;
+                    else
+                        return false;
+                }
+            }
+
+            return false;
+        }
+
+    }
 }
