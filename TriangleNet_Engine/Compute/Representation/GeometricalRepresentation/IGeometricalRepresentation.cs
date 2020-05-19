@@ -43,6 +43,8 @@ namespace BH.Engine.Representation
             "The Geometrical Representation is an IGeometry that can be used to represent the object in another environment.")] //e.g. to 3D-print a point, you want to print a Sphere.
         public static IGeometry IGeometricalRepresentation(this IObject obj, RepresentationOptions reprOptions = null)
         {
+            if (obj == null) return null;
+
             reprOptions = reprOptions ?? new RepresentationOptions();
 
             IGeometry geometricalRepresentation = null;
