@@ -31,12 +31,17 @@ using BH.Engine.Geometry;
 using BH.oM.Base;
 using BH.Engine.Graphics;
 using System.ComponentModel;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
         // Main interface method
+        [Description("Computes the Geometrical Representation of the input object and then attempts to mesh it.")]
+        [Input("obj","Any object defined within BHoM.")]
+        [Input("renderMeshOptions", "Options that regulate both the calculation of the Geometrical Representation and how it should be meshed.")]
+        [Output("A RenderMesh, which is a geometrical mesh that can potentially have additional attributes like Colours.")]
         public static BH.oM.Graphics.RenderMesh IRenderMesh(this IObject obj, RenderMeshOptions renderMeshOptions = null)
         {
             if (obj == null) return null;
