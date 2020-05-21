@@ -61,18 +61,11 @@ namespace BH.Engine.Representation
             // E.g. A BH.oM.Geometry.Point can only be represented with a Sphere, a Pixel, a Voxel, etc.
             IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
 
-            if (geomRepr == null) // Could not compute the geometrical representation for that object.
-            {
-                // I need to throw the Error here instead than in IGeometricalRepresentation because we don't have Error catch.
-                // See comment in IGeometricalRepresentation().
-                BH.Engine.Reflection.Compute.RecordError($"Could not compute the GeometricalRepresentation for {obj.GetType().Name}");
-                return null; 
-            }
-
-            renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
+            if (geomRepr != null)
+                renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
 
             if (renderMesh == null)
-                BH.Engine.Reflection.Compute.RecordError($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}");
+                throw new Exception($"Could not compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}.");
 
             return renderMesh;
         }
@@ -80,7 +73,7 @@ namespace BH.Engine.Representation
         // Fallback
         private static BH.oM.Graphics.RenderMesh RenderMesh(this IGeometry geom, RenderMeshOptions renderMeshOptions = null)
         {
-            return null;
+            throw new MissingMethodException($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {geom.GetType().Name}.");
         }
 
     }
