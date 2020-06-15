@@ -49,12 +49,24 @@ namespace BH.Engine.Representation
 
             IGeometry geometricalRepresentation = null;
 
-            // - First check if there is a specific GeometricalRepresentation method for the IObject.
+            // - Dynamic dispatch
             geometricalRepresentation = GeometricalRepresentation(obj as dynamic, reprOptions);
             if (geometricalRepresentation != null)
                 return geometricalRepresentation;
 
-            // - If not, check if the object is a IGeometry, and if it is return itself.
+            // Throw error if not found (but only if the object is not a CustomObject)
+            if (geometricalRepresentation == null & !(obj is CustomObject)) // do not throw error for CustomObjects.
+                throw new Exception($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}.");
+
+            return geometricalRepresentation;
+        }
+
+        // Fallback
+        private static IGeometry GeometricalRepresentation(this IObject obj, RepresentationOptions reprOptions = null)
+        {
+            IGeometry geometricalRepresentation = null;
+
+            // - Check if the object is a IGeometry, and if it is return itself.
             geometricalRepresentation = obj as IGeometry;
             if (geometricalRepresentation != null)
                 return geometricalRepresentation;
@@ -69,16 +81,7 @@ namespace BH.Engine.Representation
                 if (geometricalRepresentation is CompositeGeometry && (geometricalRepresentation as CompositeGeometry).Elements.Count < 1)
                     geometricalRepresentation = null;
 
-            if (geometricalRepresentation == null & !(obj is CustomObject)) // do not throw error for CustomObjects.
-                throw new Exception($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}.");
-
             return geometricalRepresentation;
-        }
-
-        // Fallback
-        private static IGeometry GeometricalRepresentation(this IObject obj, RepresentationOptions reprOptions = null)
-        {
-            throw new MissingMethodException($"Could not find a method to compute the Geometrical Representation for the object of type {obj.GetType().Name}.");
         }
     }
 }
