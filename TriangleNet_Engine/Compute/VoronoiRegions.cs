@@ -47,6 +47,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
+            points = points.CullDuplicates(tolerance);
 
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 2)
@@ -196,6 +197,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
+            points = points.CullDuplicates(tolerance);
             openingCurves = openingCurves ?? new List<ICurve>();
 
             List<Point> checkingPoints = new List<Point>(points);
