@@ -39,7 +39,7 @@ namespace BH.Engine.Geometry.Triangulation
         /****      public Methods                       ****/
         /***************************************************/
 
-        [Description("Creates a voronoi diagram from a list of coplanar points. The returned polylines cells will correspond to the input points by index.")]
+        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points. The returned polylines cells will correspond to the input points by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
@@ -47,7 +47,13 @@ namespace BH.Engine.Geometry.Triangulation
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
-            points = points.CullDuplicates(tolerance);
+            List<Point> uniquePoints = points.CullDuplicates(tolerance);
+
+            if (points.Count != uniquePoints.Count)
+            {
+                Reflection.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
+                return new List<Polyline>();
+            }
 
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 2)
@@ -136,7 +142,7 @@ namespace BH.Engine.Geometry.Triangulation
             double sqTol = tolerance * tolerance;
 
             // Convert regions to BHoMGeometry. Skip the last 4 faces as they correspond to the added boundary points.
-            for (int i = 0; i < voronoi.Faces.Count-4; i++)
+            for (int i = 0; i < voronoi.Faces.Count - 4; i++)
             {
                 var face = voronoi.Faces[i];
                 try
@@ -155,7 +161,7 @@ namespace BH.Engine.Geometry.Triangulation
                         visitedIds.Add(halfEdge.ID);
                         Point pt = new Point { X = halfEdge.Origin.X, Y = halfEdge.Origin.Y };
                         //Make sure two of the same points are not added. This could maybe be done in a more cleaver way with the half edge
-                        if(pts.Count == 0 || pt.SquareDistance(pts.Last()) > sqTol)
+                        if (pts.Count == 0 || pt.SquareDistance(pts.Last()) > sqTol)
                             pts.Add(pt);
 
                         halfEdge = halfEdge.Next;
@@ -167,7 +173,7 @@ namespace BH.Engine.Geometry.Triangulation
                         counter++;
                     } while (!visitedIds.Contains(nextId) && counter < bailOut);
 
-                    if(pts.Count > 0 && pts.First().SquareDistance(pts.Last()) > sqTol)
+                    if (pts.Count > 0 && pts.First().SquareDistance(pts.Last()) > sqTol)
                         pts.Add(pts.First());
 
                     translatedPolylines.Add(BH.Engine.Geometry.Create.Polyline(pts));
@@ -187,7 +193,7 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
-        [Description("Creates a voronoi diagram from a list of coplanar points and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points by index.")]
+        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points.")]
         [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points.")]
@@ -197,9 +203,14 @@ namespace BH.Engine.Geometry.Triangulation
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<List<PolyCurve>> VoronoiRegions(List<Point> points, ICurve boundaryCurve, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
-            points = points.CullDuplicates(tolerance);
+            List<Point> uniquePoints = points.CullDuplicates(tolerance);
             openingCurves = openingCurves ?? new List<ICurve>();
 
+            if (points.Count != uniquePoints.Count)
+            {
+                Reflection.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
+                return new List<List<PolyCurve>>();
+            }
             List<Point> checkingPoints = new List<Point>(points);
             checkingPoints.AddRange(boundaryCurve.IControlPoints());
             checkingPoints.AddRange(openingCurves.SelectMany(x => x.IControlPoints()));
@@ -290,7 +301,7 @@ namespace BH.Engine.Geometry.Triangulation
             regions.Add(CreateRegion(p1, p2, perp));
 
             //Create central regions
-            for (int i = 0; i < divPts.Count-1; i++)
+            for (int i = 0; i < divPts.Count - 1; i++)
             {
                 regions.Add(CreateRegion(divPts[i], divPts[i + 1], perp));
             }
