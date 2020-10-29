@@ -52,7 +52,7 @@ namespace BH.Engine.Representation
 
             // See if there is a custom BHoM mesh representation for this BHoMObject, before attempting the RenderMesh computation.
             if (obj is IBHoMObject)
-                if (Query.TryGetRendermesh(obj as IBHoMObject, out renderMesh, renderMeshOptions.CustomRendermeshKey))
+                if (Query.TryGetRendermesh(obj as IBHoMObject, out renderMesh))
                     return renderMesh;
 
             if (obj is BH.oM.Graphics.RenderMesh)
