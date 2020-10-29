@@ -35,32 +35,64 @@ namespace BH.Engine.Representation
 {
     public static partial class Modify
     {
-        [Description("Sets a RenderMesh in the CustomData of the BHoMObject at the specified customDataKey (default: `RenderMesh`).\n" +
-            "The RenderMesh should contain a valid representation for the BHoMObject.")]
-        public static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, IGeometry representation, string customDataKey = "RenderMesh")
+        [Description("Sets a RenderMesh in the Fragments of the BHoMObject.\n" +
+           "If specified, the `meshRepresentation` should contain a valid mesh representation for the BHoMObject." +
+           "If meshRepresentation is null, attempts to compute a Rendermesh for the object. ")]
+        [Input("bHoMObject", "BHoMObject to set the representation for.")]
+        [Input("meshRepresentation", "A valid mesh representation for the BHoMObject.")]
+        public static IBHoMObject ISetRendermesh(this IBHoMObject bHoMObject, object meshRepresentation = null, RenderMeshOptions renderMeshOptions = null)
         {
-            if (bHoMObject == null || representation == null || string.IsNullOrWhiteSpace(customDataKey))
+            if (bHoMObject == null)
                 return null;
 
-            RenderMesh rM = representation as RenderMesh;
-            Mesh m = representation as Mesh;
-
-            if (rM == null && m != null)
-                rM = m.ToRenderMesh();
-
-            if (rM == null)
+            if (meshRepresentation == null)
             {
                 // Try computing a RenderMesh from the specified representation Geometry
-                BH.Engine.Reflection.Compute.RecordNote($"The input {nameof(representation)} is neither a {nameof(BH.oM.Graphics.RenderMesh)} or a {nameof(BH.oM.Geometry.Mesh)}. Attempting to compute a RenderMesh for it.");
+                RenderMesh rm = Compute.IRenderMesh(bHoMObject, renderMeshOptions);
 
-                rM = Compute.IRenderMesh(representation);
+                if (rm == null)
+                {
+                    BH.Engine.Reflection.Compute.RecordError($"The input {nameof(meshRepresentation)} was null. The method attempted to compute a RenderMesh for the object, but this failed.");
+                    return null;
+                }
+
+                return SetRendermesh(bHoMObject, rm);
             }
 
-            IBHoMObject clonedObj = bHoMObject.GetShallowClone();
+            return SetRendermesh(bHoMObject, meshRepresentation as dynamic);
+        }
 
-            clonedObj.CustomData[customDataKey] = rM;
+        private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, RenderMesh renderMesh)
+        {
+            bHoMObject.Fragments.AddOrReplace(renderMesh);
 
-            return clonedObj;
+            return bHoMObject;
+        }
+
+        private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, Mesh representation)
+        {
+            RenderMesh rm = representation.ToRenderMesh();
+            return bHoMObject.SetRendermesh(rm);
+        }
+
+        private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, List<Mesh> representation)
+        {
+            Mesh m = Compute.JoinMeshes(representation);
+            RenderMesh rm = m.ToRenderMesh();
+            return bHoMObject.SetRendermesh(m);
+        }
+
+        private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, List<RenderMesh> representation)
+        {
+            RenderMesh m = Compute.JoinRenderMeshes(representation);
+            return bHoMObject.SetRendermesh(m);
+        }
+
+        // Fallback
+        private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, object representation)
+        {
+            BH.Engine.Reflection.Compute.RecordError("Invalid input used for the representation.");
+            return null;
         }
     }
 }
