@@ -56,7 +56,7 @@ namespace BH.Engine.Representation
 
             // Throw error if not found (but only if the object is not a CustomObject)
             if (geometricalRepresentation == null & !(obj is CustomObject)) // do not throw error for CustomObjects.
-                throw new Exception($"Could not compute the Geometrical Representation for the object of type {obj.GetType().Name}.");
+                throw new Exception($"Could not compute the Geometrical Representation for an object of type {obj.GetType().Name}.");
 
             return geometricalRepresentation;
         }
