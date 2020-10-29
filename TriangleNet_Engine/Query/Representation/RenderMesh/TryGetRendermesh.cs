@@ -36,9 +36,7 @@ namespace BH.Engine.Representation
 {
     public static partial class Query
     {
-        [Description("Retrieves a representation from the specified IBHoMObject's Fragments, if present. Returns it as a RenderMesh.\n" +
-             "If the representation is stored as a BH.oM.Geometry.Mesh type, it's converted to a RenderMesh.\n" +
-             "If the CustomData contains a list of RenderMeshes or Meshes, they are joined together into a single RenderMesh.")]
+        [Description("Retrieves a representation from the specified IBHoMObject's Fragments, if present. Returns it as a RenderMesh.\n")]
         public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh)
         {
             renderMesh = null;
