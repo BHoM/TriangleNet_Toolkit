@@ -30,68 +30,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using BH.Engine.Base;
 
 namespace BH.Engine.Representation
 {
     public static partial class Query
     {
-        [Description("Retrieves a representation from the specified IBHoMObject CustomData key, if present. Returns it as a RenderMesh.\n" +
+        [Description("Retrieves a representation from the specified IBHoMObject's Fragments, if present. Returns it as a RenderMesh.\n" +
              "If the representation is stored as a BH.oM.Geometry.Mesh type, it's converted to a RenderMesh.\n" +
              "If the CustomData contains a list of RenderMeshes or Meshes, they are joined together into a single RenderMesh.")]
-        public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh, string customDataKey = "RenderMesh")
+        public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh)
         {
-            if (string.IsNullOrWhiteSpace(customDataKey))
-            {
-                renderMesh = null;
-                return false;
-            }
-
             renderMesh = null;
 
-            if (bHoMObject != null)
-            {
-                object renderMeshObj = null;
-                bHoMObject.CustomData.TryGetValue(customDataKey, out renderMeshObj);
+            if (bHoMObject == null)
+                return false;
 
-                if (renderMeshObj != null)
-                {
-                    renderMesh = renderMeshObj as RenderMesh;
-                    Mesh geomMesh = renderMeshObj as Mesh;
+            renderMesh = bHoMObject.FindFragment<RenderMesh>(typeof(RenderMesh));
 
-                    if (renderMesh != null)
-                        return true;
-
-                    if (geomMesh != null)
-                    {
-                        renderMesh = geomMesh.ToRenderMesh();
-                        return true;
-                    }
-
-                    if (typeof(IEnumerable<object>).IsAssignableFrom(renderMeshObj.GetType()))
-                    {
-                        List<object> objects = renderMeshObj as List<object>;
-
-                        List<RenderMesh> renderMeshes = objects.OfType<RenderMesh>().ToList();
-                        List<Mesh> geomMeshes = objects.OfType<Mesh>().ToList();
-
-                        if (geomMeshes.Count > 0)
-                        {
-                            geomMesh = Compute.JoinMeshes(geomMeshes);
-                            renderMeshes.Add(geomMesh.ToRenderMesh());
-                        }
-
-                        if (renderMeshes.Count > 0)
-                            renderMesh = Compute.JoinRenderMeshes(renderMeshes);
-                    }
-
-                    if (renderMesh != null)
-                        return true;
-                    else
-                        return false;
-                }
-            }
-
-            return false;
+            if (renderMesh != null)
+                return true;
+            else
+                return false;
         }
     }
 }
