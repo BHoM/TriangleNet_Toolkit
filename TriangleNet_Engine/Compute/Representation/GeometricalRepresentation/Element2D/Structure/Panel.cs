@@ -32,6 +32,7 @@ using BH.oM.Base;
 using System.ComponentModel;
 using BH.oM.Structure.Elements;
 using BH.Engine.Structure;
+using BH.Engine.Spatial;
 using BH.oM.Structure.Constraints;
 
 namespace BH.Engine.Representation
@@ -63,7 +64,7 @@ namespace BH.Engine.Representation
                 PlanarSurface topSrf = centralPlanarSurface.ITranslate(upHalf) as PlanarSurface;
                 PlanarSurface botSrf = centralPlanarSurface.ITranslate(downHalf) as PlanarSurface;
 
-                IEnumerable<ICurve> internalEdgesBot = panel.InternalEdgeCurves().Select(c => c.ITranslate(translateVect));
+                IEnumerable<ICurve> internalEdgesBot = panel.InternalElementCurves().Select(c => c.ITranslate(translateVect));
                 IEnumerable<Extrusion> internalEdgesExtrusions = internalEdgesBot.Select(c => BH.Engine.Geometry.Create.Extrusion(c, extrudeVect));
 
                 IEnumerable<ICurve> externalEdgesBot = panel.ExternalEdges.Select(c => c.Curve.ITranslate(translateVect));
