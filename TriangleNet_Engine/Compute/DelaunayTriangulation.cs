@@ -47,8 +47,15 @@ namespace BH.Engine.Geometry.Triangulation
         [Output("curve", "A list of BHoM Polylines")]
         public static List<Polyline> DelaunayTriangulation(this Polyline outerCurve, List<Polyline> innerCurves = null, double offsetDistance = -0.001, bool conformingDelaunay = true)
         {
+            if (outerCurve == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot perform Delaunay Triangulation on an outer curve that is set to null.");
+                return new List<Polyline>();
+            }
+
             // Create a zero length list if no holes input
-            if (innerCurves == null) innerCurves = new List<Polyline>();
+            if (innerCurves == null)
+                innerCurves = new List<Polyline>();
 
             double area = outerCurve.Area();
             for (int x = 0; x < innerCurves.Count; x++)
