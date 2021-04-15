@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Pipe pipe, RenderMeshOptions renderMeshOptions = null)
         {
+            if (pipe == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null pipe.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             double radius = pipe.Radius;

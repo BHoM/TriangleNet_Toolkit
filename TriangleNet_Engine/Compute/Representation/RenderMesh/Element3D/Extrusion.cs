@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Extrusion extrusion, RenderMeshOptions renderMeshOptions = null)
         {
+            if (extrusion == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null extrusion.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             Line line = extrusion.Curve as Line;

@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this PlanarSurface planarSurface, RenderMeshOptions renderMeshOptions = null)
         {
+            if (planarSurface == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null planar surface.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             Polyline externalBoundary = planarSurface.ExternalBoundary.IRationalise(renderMeshOptions);

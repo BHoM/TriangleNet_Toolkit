@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this BoundingBox bbox, RenderMeshOptions renderMeshOptions = null)
         {
+            if (bbox == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null bounding box.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             double length = bbox.Max.X - bbox.Min.X;
