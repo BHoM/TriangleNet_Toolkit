@@ -43,6 +43,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Cone cone, RenderMeshOptions renderMeshOptions = null)
         {
+            if (cone == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null cone.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             int coneFaces = 4; // by default this creates a pyramid

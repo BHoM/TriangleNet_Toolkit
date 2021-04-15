@@ -40,6 +40,12 @@ namespace BH.Engine.Representation
         [Description("Rationalises the Polycurve into a Polyline. Currently limited functionality.")]
         public static Polyline Rationalise(this PolyCurve curve, RenderMeshOptions renderMeshOptions = null, int minSubdivisions = 3)
         {
+            if (curve == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot rationalise a null polycurve.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             if (curve.Curves.Count == 0)

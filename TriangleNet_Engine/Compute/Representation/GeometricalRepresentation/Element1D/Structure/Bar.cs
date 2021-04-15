@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
         [Description("Returns the geometrical representation of the Bar. It can be as simple as its Centreline, or an Extrusion obtained from its Cross Section.")]
         public static IGeometry GeometricalRepresentation(this Bar bar, RepresentationOptions reprOptions = null)
         {
+            if (bar == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null bar.");
+                return null;
+            }
+
             reprOptions = reprOptions ?? new RepresentationOptions();
 
             if (!reprOptions.Detailed1DElements)

@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Sphere sphere, RenderMeshOptions renderMeshOptions = null)
         {
+            if (sphere == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null sphere.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             BH.Engine.Reflection.Compute.RecordNote("RenderMesh for sphere still doesn't work properly and needs to be finished. A cube is output instead of a sphere.");

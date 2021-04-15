@@ -44,6 +44,12 @@ namespace BH.Engine.Representation
         [Description("Returns the geometrical representation of the Node. It can be as simple as a Sphere, or a more complicated Composite Geometry computed from its DOFs.")]
         public static IGeometry GeometricalRepresentation(this Node node, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
+            if(node == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null node.");
+                return null;
+            }
+
             reprOptions = reprOptions ?? new RepresentationOptions();
 
             if (node.Position == null)

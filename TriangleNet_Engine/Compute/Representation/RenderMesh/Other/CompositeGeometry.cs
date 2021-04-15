@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this CompositeGeometry compositeGeometry, RenderMeshOptions renderMeshOptions = null)
         {
+            if (compositeGeometry == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null composite geometry object.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             List<RenderMesh> renderMeshes = new List<RenderMesh>();

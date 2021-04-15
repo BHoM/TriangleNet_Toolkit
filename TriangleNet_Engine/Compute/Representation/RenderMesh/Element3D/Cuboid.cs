@@ -41,6 +41,12 @@ namespace BH.Engine.Representation
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Cuboid cuboid, RenderMeshOptions renderMeshOptions = null)
         {
+            if (cuboid == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null cuboid.");
+                return null;
+            }
+
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
             return BoxRenderMesh(cuboid.CoordinateSystem.Origin, cuboid.Length, cuboid.Depth, cuboid.Height, renderMeshOptions);

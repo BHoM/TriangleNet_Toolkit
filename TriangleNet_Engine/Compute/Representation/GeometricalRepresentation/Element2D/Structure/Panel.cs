@@ -42,6 +42,12 @@ namespace BH.Engine.Representation
         [Description("Returns the geometrical representation of the Structure Panel. It can be as simple as its middle Surface, Composite Geometry representing its thickness.")]
         public static IGeometry GeometricalRepresentation(this Panel panel, RepresentationOptions reprOptions = null)
         {
+            if (panel == null)
+            {
+                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null Structural Panel.");
+                return null;
+            }
+
             reprOptions = reprOptions ?? new RepresentationOptions();
 
             PlanarSurface centralPlanarSurface = Engine.Geometry.Create.PlanarSurface(
