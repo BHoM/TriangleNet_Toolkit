@@ -36,8 +36,11 @@ namespace BH.Engine.Representation
     public static partial class Compute
     {
         [Description("Returns the geometrical representation of the point, which is a Sphere.")] // in the future, we might want an option to choose between sphere / box.
-        public static IGeometry GeometricalRepresentation(this Point point, RepresentationOptions reprOptions = null)
+        public static IGeometry GeometricalRepresentation(this Point point, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
+            if (isSubObject) // if it is a property of another object (e.g. a Line) do not display its endpoints.
+                return null;
+
             reprOptions = reprOptions ?? new RepresentationOptions();
 
             double radius = 0.15 * reprOptions.Element0DScale;
@@ -45,5 +48,6 @@ namespace BH.Engine.Representation
 
             return sphere;
         }
+
     }
 }
