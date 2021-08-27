@@ -48,5 +48,6 @@ namespace BH.Engine.Representation
 
             return sphere;
         }
+
     } 
 }
