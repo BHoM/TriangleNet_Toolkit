@@ -71,7 +71,7 @@ namespace BH.Engine.Representation
             {
                 RenderMesh singleFaceMesh = new RenderMesh();
 
-                singleFaceMesh.Vertices.AddRange(poly.ControlPoints.Select(p => (Vertex)p));
+                singleFaceMesh.Vertices.AddRange(poly.ControlPoints.Select(p => (RenderPoint)p));
                 singleFaceMesh.Faces.Add(new Face() { A = 0, B = 1, C = 2 });
 
                 singleFacesMeshes.Add(singleFaceMesh);

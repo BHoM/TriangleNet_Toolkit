@@ -80,7 +80,7 @@ namespace BH.Engine.Representation
                 faces.Add(new Face() { A = i, B = i + 1, C = vertices.Count - 1});
             }
 
-            return new RenderMesh() { Vertices = vertices.Select(pt => (Vertex)pt).ToList(), Faces = faces };
+            return new RenderMesh() { Vertices = vertices.Select(pt => (RenderPoint)pt).ToList(), Faces = faces };
         }
 
     }

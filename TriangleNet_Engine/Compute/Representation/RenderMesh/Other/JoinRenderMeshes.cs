@@ -44,7 +44,7 @@ namespace BH.Engine.Representation
             if (renderMeshes.Count < 2)
                 return renderMeshes.FirstOrDefault();
 
-            List<Vertex> vertices = new List<Vertex>();
+            List<RenderPoint> vertices = new List<RenderPoint>();
             List<Face> faces = new List<Face>();
 
             vertices.AddRange(renderMeshes[0].Vertices);

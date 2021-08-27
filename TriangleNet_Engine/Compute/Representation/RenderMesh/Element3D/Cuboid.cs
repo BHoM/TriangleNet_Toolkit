@@ -56,11 +56,11 @@ namespace BH.Engine.Representation
         {
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            List<Vertex> vertices = new List<Vertex>();
+            List<RenderPoint> vertices = new List<RenderPoint>();
 
             // Top face (normal to global z, +)
             //0
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / 2.0),
                 Y = centrePoint.Y + (depth / 2.0),
@@ -68,7 +68,7 @@ namespace BH.Engine.Representation
             });
 
             //1
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / -2.0),
                 Y = centrePoint.Y + (depth / 2.0),
@@ -76,7 +76,7 @@ namespace BH.Engine.Representation
             });
 
             //2
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / -2.0),
                 Y = centrePoint.Y + (depth / -2.0),
@@ -84,7 +84,7 @@ namespace BH.Engine.Representation
             });
 
             //3
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / 2.0),
                 Y = centrePoint.Y + (depth / -2.0),
@@ -93,7 +93,7 @@ namespace BH.Engine.Representation
 
             // Bottom face (normal to global z, -)
             //4
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / 2.0),
                 Y = centrePoint.Y + (depth / 2.0),
@@ -101,7 +101,7 @@ namespace BH.Engine.Representation
             });
 
             //5
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / 2.0),
                 Y = centrePoint.Y + (depth / -2.0),
@@ -109,7 +109,7 @@ namespace BH.Engine.Representation
             });
 
             //6
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / -2.0),
                 Y = centrePoint.Y + (depth / -2.0),
@@ -117,7 +117,7 @@ namespace BH.Engine.Representation
             });
 
             //7
-            vertices.Add((Vertex)new Point()
+            vertices.Add((RenderPoint)new Point()
             {
                 X = centrePoint.X + (length / -2.0),
                 Y = centrePoint.Y + (depth / 2.0),
