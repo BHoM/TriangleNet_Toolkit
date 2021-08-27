@@ -73,7 +73,7 @@ namespace BH.Engine.Representation
 
                 faces.Add(new Face() { A = 0, B = 1, C = 2, D = 3 });
 
-                return new RenderMesh() { Faces = faces, Vertices = points.Cast<Vertex>().ToList() };
+                return new RenderMesh() { Faces = faces, Vertices = points.Cast<RenderPoint>().ToList() };
             }
 
             RenderMesh bottomCap = null;
@@ -108,7 +108,7 @@ namespace BH.Engine.Representation
                     }
                 }
 
-                RenderMesh renderMesh = new RenderMesh() { Vertices = points.Select(pt => (Vertex)pt).ToList(), Faces = faces };
+                RenderMesh renderMesh = new RenderMesh() { Vertices = points.Select(pt => (RenderPoint)pt).ToList(), Faces = faces };
 
                 if (bottomCap != null)
                     renderMesh = renderMesh.JoinRenderMeshes(bottomCap);

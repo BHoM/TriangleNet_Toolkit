@@ -129,7 +129,7 @@ namespace BH.Engine.Representation
             //}
             //return null;
 
-            return new RenderMesh() { Faces = allFaces, Vertices = allPoints.Select(pt => (Vertex)pt).ToList() };
+            return new RenderMesh() { Faces = allFaces, Vertices = allPoints.Select(pt => (RenderPoint)pt).ToList() };
         }
 
     }
