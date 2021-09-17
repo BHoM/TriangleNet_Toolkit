@@ -32,6 +32,7 @@ using BH.Engine.Geometry;
 using BHEG = BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -41,6 +42,10 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
+        [Description("Returns the RenderMesh for the given object, that is a mesh that can be used for Graphical Display.")]
+        [Input("cone", "Input cone.")]
+        [Input("renderMeshOptions", "Input renderMeshOptions for how the RenderMesh is computed.")]
+        [Output("renderMesh", "Resulting RenderMesh.")]
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Cone cone, RenderMeshOptions renderMeshOptions = null)
         {
             if (cone == null)
