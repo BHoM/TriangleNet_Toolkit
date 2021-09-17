@@ -30,15 +30,22 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        [Description("Returns the geometrical representation of the curve, which is a Pipe.")] // the pipe radius corresponds to how big the Curve is when represented.
+        [Description("Returns the geometrical representation of the curve, which is a Pipe or itself, depending on the reprOptions.")] // the pipe radius corresponds to how big the Curve is when represented.
+        [Input("curve", "Input curve.")]
+        [Input("reprOptions", "Representation options.")]
+        [Output("geom", "Geometrical representation.")]
         public static IGeometry GeometricalRepresentation(this ICurve curve, RepresentationOptions reprOptions = null)
         {
             reprOptions = reprOptions ?? new RepresentationOptions();
+
+            if (!reprOptions.Detailed1DElements)
+                return curve;
 
             double radius = 0.01 * reprOptions.Element1DScale;
             bool capped = reprOptions.Cap1DElements;
