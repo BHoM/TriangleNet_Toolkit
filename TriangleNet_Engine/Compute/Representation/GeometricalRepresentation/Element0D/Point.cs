@@ -30,12 +30,18 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        [Description("Returns the geometrical representation of the point, which is a Sphere.")] // in the future, we might want an option to choose between sphere / box.
+        [Description("Returns the geometrical representation of the point, which can be a Sphere or the point itself, depending on the RepresentationOptions.")] // in the future, we might want an option to choose between sphere / box.
+        [Input("point", "Point to compute the representation out from. It can be the point itself, or a Sphere that can then be meshed to represent the point location.")]
+        [Input("reprOptions", "Representation options.")]
+        [Input("isSubObject", "If true, do not compute the GeometricalRepresentation (return null). This is because, when isSubObject is true, we are saying that we are calling this method as part of another method, e.g. when we are computing the GeometricalRepresentation of a Line and its endpoints.\n" +
+            "In such instances, we may not want to display its endpoints.")]
+        [Output("geom", "Geometrical representation.")]
         public static IGeometry GeometricalRepresentation(this Point point, RepresentationOptions reprOptions = null, bool isSubObject = false)
         {
             if (isSubObject) // if it is a property of another object (e.g. a Line) do not display its endpoints.
