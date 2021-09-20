@@ -30,6 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Reflection.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -39,6 +40,10 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
+        [Description("Returns the RenderMesh for the given object, that is a mesh that can be used for Graphical Display.")]
+        [Input("pipe", "Input pipe.")]
+        [Input("renderMeshOptions", "Input renderMeshOptions for how the RenderMesh is computed.")]
+        [Output("renderMesh", "Resulting RenderMesh.")]
         public static BH.oM.Graphics.RenderMesh RenderMesh(this Pipe pipe, RenderMeshOptions renderMeshOptions = null)
         {
             if (pipe == null)
