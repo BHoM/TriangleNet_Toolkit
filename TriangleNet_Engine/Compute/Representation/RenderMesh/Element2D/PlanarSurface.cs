@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -48,7 +48,7 @@ namespace BH.Engine.Representation
         {
             if (planarSurface == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null planar surface.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null planar surface.");
                 return null;
             }
 
@@ -57,7 +57,7 @@ namespace BH.Engine.Representation
             Polyline externalBoundary = planarSurface.ExternalBoundary.IRationalise(renderMeshOptions);
             if (externalBoundary == null)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if the {nameof(planarSurface.ExternalBoundary)} is of type {nameof(Polyline)}");
+                BH.Engine.Base.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if the {nameof(planarSurface.ExternalBoundary)} is of type {nameof(Polyline)}");
                 return null;
             }
 
@@ -65,7 +65,7 @@ namespace BH.Engine.Representation
 
             if (internalBoundaries.Count != internalBoundaries.Count)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if all of the {nameof(planarSurface.InternalBoundaries)} are of type {nameof(Polyline)}");
+                BH.Engine.Base.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if all of the {nameof(planarSurface.InternalBoundaries)} are of type {nameof(Polyline)}");
                 return null;
             }
 

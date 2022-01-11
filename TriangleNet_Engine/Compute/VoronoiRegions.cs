@@ -22,7 +22,7 @@
 
 using BH.oM.Geometry;
 using BH.oM.Geometry.CoordinateSystem;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,14 +51,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (points.Count != uniquePoints.Count)
             {
-                Reflection.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
+                Base.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
                 return new List<Polyline>();
             }
 
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 2)
             {
-                Reflection.Compute.RecordError("Insuffient points for generating the diagram. Please provide at least 2 Points.");
+                Base.Compute.RecordError("Insuffient points for generating the diagram. Please provide at least 2 Points.");
                 return new List<Polyline>();
             }
 
@@ -76,14 +76,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (plane == null)
             {
-                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
+                Engine.Base.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
                 return new List<Polyline>();
             }
 
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
+                BH.Engine.Base.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
                 return new List<Polyline>();
             }
 
@@ -180,7 +180,7 @@ namespace BH.Engine.Geometry.Triangulation
                 }
                 catch (Exception)
                 {
-                    Engine.Reflection.Compute.RecordWarning("Failed to generate the region for at least one cell. An empty polyline as been added in its place.");
+                    Engine.Base.Compute.RecordWarning("Failed to generate the region for at least one cell. An empty polyline as been added in its place.");
                     translatedPolylines.Add(new Polyline());
                 }
 
@@ -208,7 +208,7 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (points.Count != uniquePoints.Count)
             {
-                Reflection.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
+                Base.Compute.RecordError("Some points are overlapping with others. Duplicates need to be culled out to create voronoi regions.");
                 return new List<List<PolyCurve>>();
             }
             List<Point> checkingPoints = new List<Point>(points);
@@ -217,7 +217,7 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (!checkingPoints.IsCoplanar(tolerance))
             {
-                Engine.Reflection.Compute.RecordError("The points, boundaryCurve and openingCurves all need to be coplanar.");
+                Engine.Base.Compute.RecordError("The points, boundaryCurve and openingCurves all need to be coplanar.");
                 return new List<List<PolyCurve>>();
             }
 
@@ -266,7 +266,7 @@ namespace BH.Engine.Geometry.Triangulation
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points, in the plane.");
+                BH.Engine.Base.Compute.RecordError("Can only handle coplanar points, in the plane.");
                 return new List<Polyline>();
             }
 

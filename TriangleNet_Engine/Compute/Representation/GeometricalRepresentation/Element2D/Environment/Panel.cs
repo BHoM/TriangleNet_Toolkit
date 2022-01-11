@@ -43,7 +43,7 @@ namespace BH.Engine.Representation
         {
             if(panel == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null Environmental Panel.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null Environmental Panel.");
                 return null;
             }
 

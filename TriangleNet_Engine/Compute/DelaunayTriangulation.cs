@@ -22,7 +22,7 @@
 
 using BH.oM.Geometry;
 using BH.oM.Geometry.CoordinateSystem;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +49,7 @@ namespace BH.Engine.Geometry.Triangulation
         {
             if (outerCurve == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot perform Delaunay Triangulation on an outer curve that is set to null.");
+                BH.Engine.Base.Compute.RecordError("Cannot perform Delaunay Triangulation on an outer curve that is set to null.");
                 return new List<Polyline>();
             }
 
@@ -159,13 +159,13 @@ namespace BH.Engine.Geometry.Triangulation
             //Preform check all inputs that triangulation can be done
             if (points == null || points.Count < 3)
             {
-                Reflection.Compute.RecordError("Insufficient points for triangulation. Please provide at least 3 Points.");
+                Base.Compute.RecordError("Insufficient points for triangulation. Please provide at least 3 Points.");
                 return new List<Polyline>();
             }
 
             if (points.IsCollinear(tolerance))
             {
-                Reflection.Compute.RecordError("Points are colinear and can not be triangulated.");
+                Base.Compute.RecordError("Points are colinear and can not be triangulated.");
                 return new List<Polyline>();
             }
 
@@ -185,14 +185,14 @@ namespace BH.Engine.Geometry.Triangulation
 
             if (plane == null)
             {
-                Engine.Reflection.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
+                Engine.Base.Compute.RecordError("Could not fit a plane through the Points and no plane was provided.");
                 return new List<Polyline>();
             }
 
             //Check all points within distance of the plane
             if (points.Any(x => x.Distance(plane) > tolerance))
             {
-                BH.Engine.Reflection.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
+                BH.Engine.Base.Compute.RecordError("Can only handle coplanar points. Please make sure all your points lie in the same plane.");
                 return new List<Polyline>();
             }
 

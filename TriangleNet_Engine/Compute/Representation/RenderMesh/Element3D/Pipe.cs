@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -48,7 +48,7 @@ namespace BH.Engine.Representation
         {
             if (pipe == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null pipe.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null pipe.");
                 return null;
             }
 
@@ -117,7 +117,7 @@ namespace BH.Engine.Representation
                 return allMeshes.JoinRenderMeshes();
             }
 
-            BH.Engine.Reflection.Compute.RecordError("RenderMesh for Pipe currently only works with pipes made of linear segments (not curved ICurves).");
+            BH.Engine.Base.Compute.RecordError("RenderMesh for Pipe currently only works with pipes made of linear segments (not curved ICurves).");
             return null;
         }
     }

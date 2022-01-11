@@ -25,7 +25,7 @@ using BH.oM.Base;
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using BH.Engine.Graphics;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +52,7 @@ namespace BH.Engine.Representation
 
                 if (rm == null)
                 {
-                    BH.Engine.Reflection.Compute.RecordError($"The input {nameof(meshRepresentation)} was null. The method attempted to compute a RenderMesh for the object, but this failed.");
+                    BH.Engine.Base.Compute.RecordError($"The input {nameof(meshRepresentation)} was null. The method attempted to compute a RenderMesh for the object, but this failed.");
                     return null;
                 }
 
@@ -91,7 +91,7 @@ namespace BH.Engine.Representation
         // Fallback
         private static IBHoMObject SetRendermesh(this IBHoMObject bHoMObject, object representation)
         {
-            BH.Engine.Reflection.Compute.RecordError("Invalid input used for the representation.");
+            BH.Engine.Base.Compute.RecordError("Invalid input used for the representation.");
             return null;
         }
     }

@@ -32,7 +32,7 @@ using BH.Engine.Geometry;
 using BHEG = BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -50,7 +50,7 @@ namespace BH.Engine.Representation
         {
             if (cone == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null cone.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null cone.");
                 return null;
             }
 

@@ -42,7 +42,7 @@ namespace BH.Engine.Representation
         {
             if (curve == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot rationalise a null polycurve.");
+                BH.Engine.Base.Compute.RecordError("Cannot rationalise a null polycurve.");
                 return null;
             }
 
@@ -71,7 +71,7 @@ namespace BH.Engine.Representation
             }
 
             if (polyline == null || polyline.ControlPoints.Count < 2)
-                BH.Engine.Reflection.Compute.RecordError("Rationalisation of curves currently only supports Arcs.");
+                BH.Engine.Base.Compute.RecordError("Rationalisation of curves currently only supports Arcs.");
 
             return polyline;
         }

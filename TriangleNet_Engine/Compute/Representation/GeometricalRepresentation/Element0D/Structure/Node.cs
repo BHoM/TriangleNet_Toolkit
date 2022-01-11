@@ -46,7 +46,7 @@ namespace BH.Engine.Representation
         {
             if(node == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null node.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null node.");
                 return null;
             }
 
@@ -54,7 +54,7 @@ namespace BH.Engine.Representation
 
             if (node.Position == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Specified Node does not have a position defined.");
+                BH.Engine.Base.Compute.RecordError("Specified Node does not have a position defined.");
                 return null;
             }
 

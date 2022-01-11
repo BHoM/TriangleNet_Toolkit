@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -48,7 +48,7 @@ namespace BH.Engine.Representation
         {
             if (cuboid == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null cuboid.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null cuboid.");
                 return null;
             }
 

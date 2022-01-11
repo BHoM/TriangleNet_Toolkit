@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -48,7 +48,7 @@ namespace BH.Engine.Representation
         {
             if (extrusion == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null extrusion.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null extrusion.");
                 return null;
             }
 
@@ -62,7 +62,7 @@ namespace BH.Engine.Representation
 
             if (line == null && polyline == null)
             {
-                BH.Engine.Reflection.Compute.RecordError($"Calling RenderMesh for {nameof(Extrusion)} currently works only if the {nameof(Extrusion.Curve)} is composed of linear segments.");
+                BH.Engine.Base.Compute.RecordError($"Calling RenderMesh for {nameof(Extrusion)} currently works only if the {nameof(Extrusion.Curve)} is composed of linear segments.");
                 return null;
             }
 
@@ -103,7 +103,7 @@ namespace BH.Engine.Representation
                     Polyline bottomBoundary = extrusion.Curve.IRationalise(renderMeshOptions);
 
                     if (bottomBoundary == null)
-                        Reflection.Compute.RecordNote("Mesh of Extrusion caps still not implemented for extrusion defined with a curve of this type.");
+                        Base.Compute.RecordNote("Mesh of Extrusion caps still not implemented for extrusion defined with a curve of this type.");
                     else
                     {
                         bottomCap = Create.PlanarSurface(bottomBoundary).RenderMesh(renderMeshOptions);
@@ -124,7 +124,7 @@ namespace BH.Engine.Representation
                 return renderMesh;
             }
 
-            BH.Engine.Reflection.Compute.RecordError($"Calling RenderMesh for {nameof(Extrusion)} currently works only if the {nameof(Extrusion.Curve)} is composed of linear segments.");
+            BH.Engine.Base.Compute.RecordError($"Calling RenderMesh for {nameof(Extrusion)} currently works only if the {nameof(Extrusion.Curve)} is composed of linear segments.");
             return null;
         }
     }
