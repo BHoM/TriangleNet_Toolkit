@@ -43,7 +43,7 @@ namespace BH.Engine.Representation
         {
             if (bbox == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null bounding box.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null bounding box.");
                 return null;
             }
 

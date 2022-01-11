@@ -43,7 +43,7 @@ namespace BH.Engine.Representation
         {
             if (compositeGeometry == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null composite geometry object.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null composite geometry object.");
                 return null;
             }
 

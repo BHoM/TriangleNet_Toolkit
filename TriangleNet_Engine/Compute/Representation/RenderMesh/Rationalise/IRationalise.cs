@@ -52,7 +52,7 @@ namespace BH.Engine.Representation
         // Fallback
         private static Polyline Rationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
-            BH.Engine.Reflection.Compute.RecordError($"Could not find a method to rationalise the curve {curve.GetType().Name}. Currently support only Arc and Circle.");
+            BH.Engine.Base.Compute.RecordError($"Could not find a method to rationalise the curve {curve.GetType().Name}. Currently support only Arc and Circle.");
             return null;
         }
     }

@@ -31,7 +31,7 @@ using BH.Engine.Geometry;
 using BH.oM.Base;
 using BH.Engine.Graphics;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {

@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {

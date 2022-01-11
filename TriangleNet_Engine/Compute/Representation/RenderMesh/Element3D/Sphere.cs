@@ -30,7 +30,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Reflection.Attributes;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -48,13 +48,13 @@ namespace BH.Engine.Representation
         {
             if (sphere == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the mesh of a null sphere.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null sphere.");
                 return null;
             }
 
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            BH.Engine.Reflection.Compute.RecordNote("RenderMesh for sphere still doesn't work properly and needs to be finished. A cube is output instead of a sphere.");
+            BH.Engine.Base.Compute.RecordNote("RenderMesh for sphere still doesn't work properly and needs to be finished. A cube is output instead of a sphere.");
 
             double radius = sphere.Radius;
 

@@ -43,7 +43,7 @@ namespace BH.Engine.Representation
         {
             if (bar == null)
             {
-                BH.Engine.Reflection.Compute.RecordError("Cannot compute the geometrical representation of a null bar.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null bar.");
                 return null;
             }
 
