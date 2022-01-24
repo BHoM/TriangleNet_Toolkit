@@ -59,7 +59,7 @@ namespace BH.Engine.Representation
             }
 
             if (node.Support == null || !reprOptions.Detailed0DElements) // If there is no support information, or by choice...
-                return BH.Engine.Structure.Query.Position(node); // ...just return the representation for the point.
+                return node.Position; // ...just return the representation for the point.
 
             // -------------------------------------------- //
             // -------- Compute the representation -------- //
@@ -93,7 +93,7 @@ namespace BH.Engine.Representation
 
                 CompositeGeometry compositeGeometry = new CompositeGeometry();
 
-                Sphere sphere = BH.Engine.Geometry.Create.Sphere(BH.Engine.Structure.Query.Position(node), radius);
+                Sphere sphere = BH.Engine.Geometry.Create.Sphere(node.Position, radius);
                 compositeGeometry.Elements.Add(sphere);
 
                 double coneHeight = 4 * radius;
