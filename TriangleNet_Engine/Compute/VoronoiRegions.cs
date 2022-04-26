@@ -113,7 +113,7 @@ namespace BH.Engine.Geometry.Triangulation
             if (boundarySize <= 0)
             {
                 lengthX = (bounds.Max.X - bounds.Min.X);
-                lengthY = (bounds.Max.X - bounds.Min.X);
+                lengthY = (bounds.Max.Y - bounds.Min.Y);
             }
             else
             {
@@ -259,16 +259,18 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
-        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points by index.")]
+        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and curves. The returned polylines cells will correspond to the input points and curves by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
-        [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points.")]
-        [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points.")]
+        [Input("curves", "The coplanar curves to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
+        [Input("curveDiscreteisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
-        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points.", typeof(Length))]
+        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points and curves.", typeof(Length))]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
+        [Input("simplifyDistTol", "Distance tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Length))]
+        [Input("simplifyAngTol", "Angle tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Angle))]
         [MultiOutput(0, "pointRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         [MultiOutput(1, "curveRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided lines.")]
-        public static Output<List<Polyline>, List<List<Polyline>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int lineDiscreteisation = 10, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
+        public static Output<List<Polyline>, List<List<Polyline>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscreteisation = 10, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
         {
             points = points ?? new List<Point>();
             curves = curves ?? new List<ICurve>();
@@ -293,7 +295,7 @@ namespace BH.Engine.Geometry.Triangulation
             for (int i = 0; i < curves.Count; i++)
             {
                 IEnumerable<ICurve> subCurves = curves[i].ISubParts();
-                List<Point> curvePts = subCurves.SelectMany(x => x.SamplePoints(lineDiscreteisation)).ToList();
+                List<Point> curvePts = subCurves.SelectMany(x => x.SamplePoints(curveDiscreteisation)).ToList();
 
                 if (startOffset[i])
                     curvePts[0] = curvePts[0] + subCurves.First().IStartDir() * tolerance * 5;
@@ -322,7 +324,6 @@ namespace BH.Engine.Geometry.Triangulation
                 return new Output<List<Polyline>, List<List<Polyline>>>() { Item1 = new List<Polyline>(), Item2 = new List<List<Polyline>>() };
             }
 
-
             List<Polyline> voronoiRegions = VoronoiRegions(voronoiPts, plane, boundarySize, tolerance);
 
             List<Polyline> pointRegions = voronoiRegions.GetRange(0, points.Count);
@@ -343,16 +344,20 @@ namespace BH.Engine.Geometry.Triangulation
 
         /***************************************************/
 
-        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points by index.")]
+        [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and curves and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points and curves by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
-        [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points.")]
-        [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points.")]
+        [Input("curves", "The coplanar curves to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
+        [Input("curveDiscreteisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
+        [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points and curves.")]
+        [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points and curves.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
-        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points.", typeof(Length))]
+        [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the boundary curve.", typeof(Length))]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
+        [Input("simplifyDistTol", "Distance tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Length))]
+        [Input("simplifyAngTol", "Angle tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Angle))]
         [MultiOutput(0, "pointRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         [MultiOutput(1, "curveRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided lines.")]
-        public static Output<List<List<PlanarSurface>>, List<List<PlanarSurface>>> VoronoiRegions(List<Point> points = null, List<ICurve> lines = null, int lineDiscreteisation = 10, ICurve boundaryCurve = null, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
+        public static Output<List<List<PlanarSurface>>, List<List<PlanarSurface>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscreteisation = 10, ICurve boundaryCurve = null, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
         {
             openingCurves = openingCurves ?? new List<ICurve>();
             List<Point> checkingPoints = new List<Point>();
@@ -378,7 +383,7 @@ namespace BH.Engine.Geometry.Triangulation
                 boundarySize = Math.Max(boundaryBox.HorizontalHypotenuseLength(), boundaryBox.Height());
             }
 
-            Output<List<Polyline>, List<List<Polyline>>> untrimmedRegions = VoronoiRegions(points, lines, lineDiscreteisation, plane, boundarySize, tolerance, simplifyDistTol, simplifyAngTol);
+            Output<List<Polyline>, List<List<Polyline>>> untrimmedRegions = VoronoiRegions(points, curves, curveDiscreteisation, plane, boundarySize, tolerance, simplifyDistTol, simplifyAngTol);
 
             List<List<PolyCurve>> trimmedCurves = new List<List<PolyCurve>>();
 
@@ -395,7 +400,8 @@ namespace BH.Engine.Geometry.Triangulation
         /****      Private Methods                      ****/
         /***************************************************/
 
-        public static bool AnyIntersectingNotEndPoints(this List<ICurve> curves, List<Point> points, out List<bool> offsetStart, out List<bool> offsetEnd, out List<List<Point>> mustIncludePts, double tolerance)
+        [Description("Checks if any of the curves are intersecting with each other or touching any of the providing points. Takes different actions depending if there is an issue that will affect the voronoi generation or if it can be fixed with small tweaks. Returns true if an intersection that can not be handled is found.")]
+        private static bool AnyIntersectingNotEndPoints(this List<ICurve> curves, List<Point> points, out List<bool> offsetStart, out List<bool> offsetEnd, out List<List<Point>> mustIncludePts, double tolerance)
         {
             offsetStart = Enumerable.Repeat(false, curves.Count).ToList();
             offsetEnd = Enumerable.Repeat(false, curves.Count).ToList();
@@ -465,25 +471,56 @@ namespace BH.Engine.Geometry.Triangulation
         }
 
         [Description("Simplified naive boolean union that joins consecutive closed polylines that share an identical edge by removing those identical edges and then joining the remaining parts.")]
-        public static List<Polyline> SimpleBooleanUnion(this List<Polyline> pLines, double tol = Tolerance.Distance)
+        private static List<Polyline> SimpleBooleanUnion(this List<Polyline> pLines, double tol = Tolerance.Distance)
         {
             List<Line> subParts = pLines.SelectMany(x => x.SubParts()).ToList();//Get all line segments
+
+            List<Line> uniqueLines;
             //Group edges by midpoint
-            double sqTol = tol * tol;
-            Func<Line, DomainBox> toDomainBox = li => new DomainBox()
+            if (tol > 1e-7)
             {
-                Domains = new Domain[] {
-                    new Domain((li.Start.X + li.End.X)/2, (li.Start.X + li.End.X)/2),
-                    new Domain((li.Start.Y + li.End.Y)/2, (li.Start.Y + li.End.Y)/2),
-                    new Domain((li.Start.Z + li.End.Z)/2, (li.Start.Z + li.End.Z)/2),
+                //if tolerance is not to small to risk int overflow, group by use of discrete points rounded up by the tolerance value
+                Dictionary<DiscretePoint, List<Line>> groupedLines = new Dictionary<DiscretePoint, List<Line>>();
+                double factor = 1 / (2 * tol);
+                foreach (Line line in subParts)
+                {
+                    DiscretePoint pt = new DiscretePoint
+                    {
+                        X = (int)Math.Floor((line.Start.X + line.End.X) * factor),
+                        Y = (int)Math.Floor((line.Start.Y + line.End.Y) * factor),
+                        Z = (int)Math.Floor((line.Start.Z + line.End.Z) * factor)
+                    };
+
+                    if (groupedLines.ContainsKey(pt))
+                        groupedLines[pt].Add(line);
+                    else
+                        groupedLines[pt] = new List<Line> { line };
                 }
-            };
-            Func<DomainBox, DomainBox, bool> treeFunction = (a, b) => a.SquareDistance(b) < sqTol;
-            Func<Line, Line, bool> itemFunction = (a, b) => true;  // The distance between the boxes is enough to determine if a Point is in range
-            List<List<Line>> clusterLines = Data.Compute.DomainTreeClusters<Line>(subParts, toDomainBox, treeFunction, itemFunction, 1);
-            
-            //Get out lines that where in a group with only one edge -> unique lines
-            List<Line> uniqueLines = clusterLines.Where(x => x.Count < 2).SelectMany(x => x).ToList();
+
+                uniqueLines = groupedLines.Values.Where(x => x.Count < 2).SelectMany(x => x).ToList();
+
+
+            }
+            else
+            {
+                //Else if to small tolerance, use domain box to cluster. SLower but more resiliant to really tight tolerances
+                double sqTol = tol * tol;
+                Func<Line, DomainBox> toDomainBox = li => new DomainBox()
+                {
+                    Domains = new Domain[] {
+                        new Domain((li.Start.X + li.End.X)/2, (li.Start.X + li.End.X)/2),
+                        new Domain((li.Start.Y + li.End.Y)/2, (li.Start.Y + li.End.Y)/2),
+                        new Domain((li.Start.Z + li.End.Z)/2, (li.Start.Z + li.End.Z)/2),
+                    }
+                };
+                Func<DomainBox, DomainBox, bool> treeFunction = (a, b) => a.SquareDistance(b) < sqTol;
+                Func<Line, Line, bool> itemFunction = (a, b) => true;  // The distance between the boxes is enough to determine if a Point is in range
+                List<List<Line>> clusterLines = Data.Compute.DomainTreeClusters<Line>(subParts, toDomainBox, treeFunction, itemFunction, 1);
+
+                //Get out lines that where in a group with only one edge -> unique lines
+                uniqueLines = clusterLines.Where(x => x.Count < 2).SelectMany(x => x).ToList();
+            }
+
             return Engine.Geometry.Compute.Join(uniqueLines);
         }
 
