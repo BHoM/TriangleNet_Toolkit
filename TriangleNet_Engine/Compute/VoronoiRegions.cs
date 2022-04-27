@@ -262,7 +262,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and curves. The returned polylines cells will correspond to the input points and curves by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("curves", "The coplanar curves to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
-        [Input("curveDiscreteisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
+        [Input("curveDiscretisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
         [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points and curves.", typeof(Length))]
         [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
@@ -270,7 +270,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Input("simplifyAngTol", "Angle tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Angle))]
         [MultiOutput(0, "pointRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         [MultiOutput(1, "curveRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided lines.")]
-        public static Output<List<Polyline>, List<List<Polyline>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscreteisation = 10, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
+        public static Output<List<Polyline>, List<List<Polyline>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscretisation = 10, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
         {
             points = points ?? new List<Point>();
             curves = curves ?? new List<ICurve>();
@@ -295,7 +295,7 @@ namespace BH.Engine.Geometry.Triangulation
             for (int i = 0; i < curves.Count; i++)
             {
                 IEnumerable<ICurve> subCurves = curves[i].ISubParts();
-                List<Point> curvePts = subCurves.SelectMany(x => x.SamplePoints(curveDiscreteisation)).ToList();
+                List<Point> curvePts = subCurves.SelectMany(x => x.SamplePoints(curveDiscretisation)).ToList();
 
                 if (startOffset[i])
                     curvePts[0] = curvePts[0] + subCurves.First().IStartDir() * tolerance * 5;
@@ -347,7 +347,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points and curves and cuts the cells with the provided boundary curves. The returned polylines cells will correspond to the input points and curves by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("curves", "The coplanar curves to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
-        [Input("curveDiscreteisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
+        [Input("curveDiscretisation", "Parameter defining how many points the curves should be discretised to be used when creating the Voronoi diagram.")]
         [Input("boundaryCurve", "Outer boundary for any of the voronoi cells. Must be coplanar with the provided points and curves.")]
         [Input("openingCurves", "Inner openings to be cut out from the voronoi cells. Must be coplanar with the provided points and curves.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
@@ -357,7 +357,7 @@ namespace BH.Engine.Geometry.Triangulation
         [Input("simplifyAngTol", "Angle tolerance to be used for simplifying the regions, reducing the number of controlpoints.", typeof(Angle))]
         [MultiOutput(0, "pointRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         [MultiOutput(1, "curveRegions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided lines.")]
-        public static Output<List<List<PlanarSurface>>, List<List<PlanarSurface>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscreteisation = 10, ICurve boundaryCurve = null, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
+        public static Output<List<List<PlanarSurface>>, List<List<PlanarSurface>>> VoronoiRegions(List<Point> points = null, List<ICurve> curves = null, int curveDiscretisation = 10, ICurve boundaryCurve = null, List<ICurve> openingCurves = null, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance, double simplifyDistTol = Tolerance.MacroDistance, double simplifyAngTol = Math.PI / 180 * 3)
         {
             openingCurves = openingCurves ?? new List<ICurve>();
             List<Point> checkingPoints = new List<Point>();
@@ -383,7 +383,7 @@ namespace BH.Engine.Geometry.Triangulation
                 boundarySize = Math.Max(boundaryBox.HorizontalHypotenuseLength(), boundaryBox.Height());
             }
 
-            Output<List<Polyline>, List<List<Polyline>>> untrimmedRegions = VoronoiRegions(points, curves, curveDiscreteisation, plane, boundarySize, tolerance, simplifyDistTol, simplifyAngTol);
+            Output<List<Polyline>, List<List<Polyline>>> untrimmedRegions = VoronoiRegions(points, curves, curveDiscretisation, plane, boundarySize, tolerance, simplifyDistTol, simplifyAngTol);
 
             List<List<PolyCurve>> trimmedCurves = new List<List<PolyCurve>>();
 
