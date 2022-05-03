@@ -477,31 +477,31 @@ namespace BH.Engine.Geometry.Triangulation
 
             List<Line> uniqueLines;
             //Group edges by midpoint
-            if (tol > 1e-7)
-            {
-                //if tolerance is not to small to risk int overflow, group by use of discrete points rounded up by the tolerance value
-                Dictionary<DiscretePoint, List<Line>> groupedLines = new Dictionary<DiscretePoint, List<Line>>();
-                double factor = 1 / (2 * tol);
-                foreach (Line line in subParts)
-                {
-                    DiscretePoint pt = new DiscretePoint
-                    {
-                        X = (int)Math.Floor((line.Start.X + line.End.X) * factor),
-                        Y = (int)Math.Floor((line.Start.Y + line.End.Y) * factor),
-                        Z = (int)Math.Floor((line.Start.Z + line.End.Z) * factor)
-                    };
+            //if (tol > 1e-7)
+            //{
+            //    //if tolerance is not to small to risk int overflow, group by use of discrete points rounded up by the tolerance value
+            //    Dictionary<DiscretePoint, List<Line>> groupedLines = new Dictionary<DiscretePoint, List<Line>>();
+            //    double factor = 1 / (2 * tol);
+            //    foreach (Line line in subParts)
+            //    {
+            //        DiscretePoint pt = new DiscretePoint
+            //        {
+            //            X = (int)Math.Floor((line.Start.X + line.End.X) * factor),
+            //            Y = (int)Math.Floor((line.Start.Y + line.End.Y) * factor),
+            //            Z = (int)Math.Floor((line.Start.Z + line.End.Z) * factor)
+            //        };
 
-                    if (groupedLines.ContainsKey(pt))
-                        groupedLines[pt].Add(line);
-                    else
-                        groupedLines[pt] = new List<Line> { line };
-                }
+            //        if (groupedLines.ContainsKey(pt))
+            //            groupedLines[pt].Add(line);
+            //        else
+            //            groupedLines[pt] = new List<Line> { line };
+            //    }
 
-                uniqueLines = groupedLines.Values.Where(x => x.Count < 2).SelectMany(x => x).ToList();
+            //    uniqueLines = groupedLines.Values.Where(x => x.Count < 2).SelectMany(x => x).ToList();
 
 
-            }
-            else
+            //}
+            //else
             {
                 //Else if to small tolerance, use domain box to cluster. SLower but more resiliant to really tight tolerances
                 double sqTol = tol * tol;
