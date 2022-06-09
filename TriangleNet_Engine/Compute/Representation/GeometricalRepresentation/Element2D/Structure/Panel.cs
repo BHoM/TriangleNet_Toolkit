@@ -60,7 +60,7 @@ namespace BH.Engine.Representation
             {
                 CompositeGeometry compositeGeometry = new CompositeGeometry();
 
-                double thickness = panel.Property.IAverageThickness();
+                double thickness = panel.Property.ITotalThickness();
                 Vector translateVect = new Vector() { Z = -thickness / 2 };
                 Vector extrudeVect = new Vector() { Z = thickness };
 
