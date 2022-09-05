@@ -454,9 +454,9 @@ namespace BH.Engine.Geometry.Triangulation
                             else
                                 mustIncludePts[i].Add(point);
 
-                            if (point.SquareDistance(stPt) < sqTol)
+                            if (point.SquareDistance(c2.IStartPoint()) < sqTol)
                                 offsetStart[j] = endPt = true;
-                            else if (point.SquareDistance(enPt) < sqTol)
+                            else if (point.SquareDistance(c2.IEndPoint()) < sqTol)
                                 offsetEnd[j] = endPt = true;
                             else
                                 mustIncludePts[j].Add(point);
