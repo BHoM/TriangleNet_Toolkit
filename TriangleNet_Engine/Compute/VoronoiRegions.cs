@@ -546,8 +546,8 @@ namespace BH.Engine.Geometry.Triangulation
                     if (openingTrimmedCurves.Any())
                         trimmedRegions.AddRange(Create.PlanarSurface(openingTrimmedCurves, tolerance));
                 }
-                else
-                    trimmedRegions.Add(Create.PlanarSurface(curve, new  List<ICurve>(), tolerance));   //If no opening in range, skip trimming and add the full curve
+                else   //If no opening in range, skip trimming and add the full curve
+                    trimmedRegions.Add(new PlanarSurface(new BoundaryCurve(curve.ISubParts()), new List<ICurve>()));    //Safe to directly call constructor as curve has been checked already by method(s) called.
             }
             return trimmedRegions;
         }
