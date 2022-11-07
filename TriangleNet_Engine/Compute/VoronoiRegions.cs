@@ -526,17 +526,17 @@ namespace BH.Engine.Geometry.Triangulation
 
         private static List<PlanarSurface> TrimWithBoundaryAndOpenings(this Polyline pLine, ICurve boundaryCurve, List<Tuple<ICurve, BoundingBox>> openingCurves, double tolerance)
         {
-            List<PolyCurve> boundaryTrimmedCurves;
+            List<ICurve> boundaryTrimmedCurves;
             if (boundaryCurve != null)
-                boundaryTrimmedCurves = pLine.BooleanIntersection(boundaryCurve, tolerance);
+                boundaryTrimmedCurves = pLine.BooleanIntersection(boundaryCurve, tolerance).ToList<ICurve>();
             else
-                boundaryTrimmedCurves = new List<PolyCurve>() { (PolyCurve)pLine };
+                boundaryTrimmedCurves = new List<ICurve>() { pLine };
 
             List<PlanarSurface> trimmedRegions = new List<PlanarSurface>();
 
-            foreach (PolyCurve curve in boundaryTrimmedCurves)
+            foreach (ICurve curve in boundaryTrimmedCurves)
             {
-                BoundingBox curveBox = curve.Bounds();
+                BoundingBox curveBox = curve.IBounds();
                 //Find opening curves in range of the curve to trim
                 IEnumerable<ICurve> inRangeOpeningCurves = openingCurves.Where(x => x.Item2.IsInRange(curveBox)).Select(x => x.Item1);
 
