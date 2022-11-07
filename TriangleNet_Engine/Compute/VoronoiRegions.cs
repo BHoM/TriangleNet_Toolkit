@@ -541,7 +541,11 @@ namespace BH.Engine.Geometry.Triangulation
                 IEnumerable<ICurve> inRangeOpeningCurves = openingCurves.Where(x => x.Item2.IsInRange(curveBox)).Select(x => x.Item1);
 
                 if (inRangeOpeningCurves.Any()) //If any opening is in range, then use it to trim
-                    trimmedRegions.AddRange(Create.PlanarSurface(curve.BooleanDifference(inRangeOpeningCurves, tolerance).ToList<ICurve>()));
+                {
+                    List<ICurve> openingTrimmedCurves = curve.BooleanDifference(inRangeOpeningCurves, tolerance).ToList<ICurve>();
+                    if(openingTrimmedCurves.Any())
+                        trimmedRegions.AddRange(Create.PlanarSurface(openingTrimmedCurves, tolerance));
+                }
                 else
                     trimmedRegions.Add(new PlanarSurface(curve, new List<ICurve>()));   //If no opening in range, skip trimming and add the full curve
             }
