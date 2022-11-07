@@ -543,11 +543,11 @@ namespace BH.Engine.Geometry.Triangulation
                 if (inRangeOpeningCurves.Any()) //If any opening is in range, then use it to trim
                 {
                     List<ICurve> openingTrimmedCurves = curve.BooleanDifference(inRangeOpeningCurves, tolerance).ToList<ICurve>();
-                    if(openingTrimmedCurves.Any())
+                    if (openingTrimmedCurves.Any())
                         trimmedRegions.AddRange(Create.PlanarSurface(openingTrimmedCurves, tolerance));
                 }
                 else
-                    trimmedRegions.Add(new PlanarSurface(curve, new List<ICurve>()));   //If no opening in range, skip trimming and add the full curve
+                    trimmedRegions.Add(Create.PlanarSurface(curve, new  List<ICurve>(), tolerance));   //If no opening in range, skip trimming and add the full curve
             }
             return trimmedRegions;
         }
