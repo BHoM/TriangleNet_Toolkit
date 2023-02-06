@@ -58,6 +58,9 @@ namespace BH.Engine.Representation
             if (obj is BH.oM.Graphics.RenderMesh)
                 return obj as BH.oM.Graphics.RenderMesh;
 
+            if (obj is RenderGeometry)
+                return RenderMesh(obj as RenderGeometry);
+
             BH.oM.Geometry.Mesh mesh = obj as BH.oM.Geometry.Mesh;
             if (mesh != null)
                 return mesh.ToRenderMesh();
