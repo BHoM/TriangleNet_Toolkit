@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2022, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -44,7 +44,7 @@ namespace BH.Engine.Representation
         {
             if (renderGeometry == null)
             {
-                BH.Engine.Base.Compute.RecordError($"Cannot compute the mesh of a null {nameof(RenderGeometry)} object.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null render geometry object.");
                 return null;
             }
 
