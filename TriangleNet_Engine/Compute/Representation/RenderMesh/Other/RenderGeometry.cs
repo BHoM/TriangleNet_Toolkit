@@ -23,13 +23,13 @@
 using BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
+using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
-using BH.Engine.Graphics;
 using System.ComponentModel;
 using BH.oM.Base.Attributes;
 
@@ -37,53 +37,34 @@ namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        // Main interface method
-        [Description("Computes the Geometrical Representation of the input object and then attempts to mesh it.")]
-        [Input("obj","Any object defined within BHoM.")]
+        /***************************************************/
+        /**** Public Methods - Graphics                 ****/
+        /***************************************************/
+
+        [Description("Returns the RenderMesh representation of an input RenderGeometry.")]
+        [Input("renderGeometry", "The RenderGeometry to get a RenderMesh from.")]
         [Input("renderMeshOptions", "Options that regulate both the calculation of the Geometrical Representation and how it should be meshed.")]
         [Output("A RenderMesh, which is a geometrical mesh that can potentially have additional attributes like Colours.")]
-        public static BH.oM.Graphics.RenderMesh IRenderMesh(this IObject obj, RenderMeshOptions renderMeshOptions = null)
+
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this RenderGeometry renderGeometry, RenderMeshOptions renderMeshOptions = null)
         {
-            if (obj == null) return null;
+            if (renderGeometry == null)
+            {
+                BH.Engine.Base.Compute.RecordError($"Cannot compute the mesh of a null {nameof(RenderGeometry)} object.");
+                return null;
+            }
 
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            RenderMesh renderMesh = null;
+            RenderMesh renderMesh = IRenderMesh(renderGeometry.Geometry);
 
-            // See if there is a custom BHoM mesh representation for this BHoMObject, before attempting the RenderMesh computation.
-            if (obj is IBHoMObject)
-                if (Query.TryGetRendermesh(obj as IBHoMObject, out renderMesh))
-                    return renderMesh;
-
-            if (obj is BH.oM.Graphics.RenderMesh)
-                return obj as BH.oM.Graphics.RenderMesh;
-
-            if (obj is RenderGeometry)
-                return RenderMesh(obj as RenderGeometry);
-
-            BH.oM.Geometry.Mesh mesh = obj as BH.oM.Geometry.Mesh;
-            if (mesh != null)
-                return mesh.ToRenderMesh();
-
-            // If obj is of type IGeometry, we still need to compute its geometrical representation.
-            // E.g. A BH.oM.Geometry.Point can only be represented with a Sphere, a Pixel, a Voxel, etc.
-            IGeometry geomRepr = IGeometricalRepresentation(obj, renderMeshOptions.RepresentationOptions);
-
-            if (geomRepr != null)
-                renderMesh = RenderMesh(geomRepr as dynamic, renderMeshOptions);
-
-            if (renderMesh == null)
-                throw new Exception($"Could not compute the {nameof(BH.oM.Graphics.RenderMesh)} of {obj.GetType().Name}.");
+            foreach (RenderPoint vertice in renderMesh.Vertices)
+            {
+                vertice.Colour = renderGeometry.Colour;
+            }
 
             return renderMesh;
         }
-
-        // Fallback
-        private static BH.oM.Graphics.RenderMesh RenderMesh(this IGeometry geom, RenderMeshOptions renderMeshOptions = null)
-        {
-            throw new MissingMethodException($"Could not find a method to compute the {nameof(BH.oM.Graphics.RenderMesh)} of {geom.GetType().Name}.");
-        }
-
     }
 }
 
