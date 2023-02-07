@@ -31,6 +31,7 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Base.Attributes;
 
 namespace BH.Engine.Representation
 {
@@ -39,6 +40,11 @@ namespace BH.Engine.Representation
         /***************************************************/
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
+
+        [Description("Returns the RenderMesh representation of an input RenderGeometry.")]
+        [Input("renderGeometry", "The RenderGeometry to get a RenderMesh from.")]
+        [Input("renderMeshOptions", "Options that regulate both the calculation of the Geometrical Representation and how it should be meshed.")]
+        [Output("A RenderMesh, which is a geometrical mesh that can potentially have additional attributes like Colours.")]
 
         public static BH.oM.Graphics.RenderMesh RenderMesh(this RenderGeometry renderGeometry, RenderMeshOptions renderMeshOptions = null)
         {
