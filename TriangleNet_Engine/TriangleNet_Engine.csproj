@@ -131,7 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compute\Representation\RenderMesh\Other\RenderGeometry.cs" />
+    <Compile Include="Compute\Representation\RenderMesh\RenderMesh.cs" />
     <Compile Include="Query\Representation\RenderMesh\TryGetRendermesh.cs" />
     <Compile Include="Modify\Representation\RenderMesh\SetRendermesh.cs" />
     <Compile Include="Compute\DelaunayTriangulation.cs" />
