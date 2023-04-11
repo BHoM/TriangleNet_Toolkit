@@ -1,35 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F155E126-17F1-4842-92BC-5FF6847EE647}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TriangleNet_Engine</RootNamespace>
-    <AssemblyName>TriangleNet_Engine</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <Description>https://github.com/BHoM/TriangleNet_Toolkit</Description>
+    <Version>5.0.0</Version>
+    <Authors>BHoM</Authors>
+    <Copyright>Copyright © https://github.com/BHoM</Copyright>
+    <RootNamespace>BH.Engine.Geometry.Triangulation</RootNamespace>
+    <FileVersion>6.2.0.0</FileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\Build\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\Build\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot;  &quot;C:\ProgramData\BHoM\Assemblies&quot; /Y" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Triangle" Version="0.0.6-Beta3" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="Analytical_oM">
       <HintPath>C:\ProgramData\BHoM\Assemblies\Analytical_oM.dll</HintPath>
@@ -116,70 +110,6 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Triangle, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Triangle.0.0.6-Beta3\lib\net45\Triangle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Compute\Representation\RenderMesh\RenderMesh.cs" />
-    <Compile Include="Query\Representation\RenderMesh\TryGetRendermesh.cs" />
-    <Compile Include="Modify\Representation\RenderMesh\SetRendermesh.cs" />
-    <Compile Include="Compute\DelaunayTriangulation.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Point.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element0D\Structure\Node.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element2D\Environment\Panel.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element2D\Structure\Panel.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\ICurve.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\Element1D\Structure\Bar.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\CustomObject.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element1D\ICurve.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element2D\PlanarSurface.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\Pipe.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\BoundingBox.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\Cone.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\Cuboid.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\Extrusion.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Element3D\Sphere.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Other\JoinRenderMeshes.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Rationalise\IRationalise.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Rationalise\Rationalise.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Other\JoinMeshes.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\IRenderMesh.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Other\CompositeGeometry.cs" />
-    <Compile Include="Compute\Representation\RenderMesh\Other\Utilities.cs" />
-    <Compile Include="Compute\Representation\GeometricalRepresentation\IGeometricalRepresentation.cs" />
-    <Compile Include="Compute\VoronoiRegions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compute\Representation\GeometricalRepresentation\Element3D\" />
-    <Folder Include="Compute\Representation\RenderMesh\Element0D\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-xcopy "$(TargetDir)$(TargetFileName)"  "C:\ProgramData\BHoM\Assemblies" /Y
-    
-xcopy "$(TargetDir)Triangle.dll"  "C:\ProgramData\BHoM\Assemblies" /Y</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
