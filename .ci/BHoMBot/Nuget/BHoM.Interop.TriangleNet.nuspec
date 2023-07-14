@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>BHoM.Interop.TriangleNet</id>
+    <version></version>
+    <authors>BHoM</authors>
+    <projectUrl>https://github.com/BHoM/TriangleNet_Toolkit</projectUrl>
+    <license type="file">licence.txt</license>
+    <icon>icon.png</icon>
+    <readme>readme.md</readme>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Interoperability with TriangleNet triangulation of geometry and the BHoM - more information available at https://github.com/BHoM/TriangleNet_Toolkit</description>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <tags>BHoM trianglenet aec</tags>
+    <title></title>
+    <dependencies>
+      <group targetFramework="netstandard2.0.0">
+        <dependency id="Microsoft.CSharp" version="4.7.0" />
+        <dependency id="NETStandard.Library" version="2.0.3" />
+      </group>
+      <group targetFramework="net452">
+        <dependency id="Triangle" version="0.0.6-Beta3" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="licence/licence.txt" target="" />
+    <file src="images/icon.png" target="" />
+    <file src="docs/readme.md" target="" />
+  </files>
+</package>
