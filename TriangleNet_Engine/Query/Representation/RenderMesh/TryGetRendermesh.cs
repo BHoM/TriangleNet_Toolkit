@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -36,7 +36,7 @@ namespace BH.Engine.Representation
 {
     public static partial class Query
     {
-        [Description("Retrieves a representation from the specified IBHoMObject's Fragments, if present. Returns it as a RenderMesh.\n")]
+        [Description("Retrieves a representation from the specified IBHoMObject's Fragments, if present. Returns it as a RenderMesh.")]
         public static bool TryGetRendermesh(this IBHoMObject bHoMObject, out RenderMesh renderMesh)
         {
             renderMesh = null;
@@ -53,6 +53,7 @@ namespace BH.Engine.Representation
         }
     }
 }
+
 
 
 

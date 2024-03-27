@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -45,8 +45,8 @@ namespace BH.Engine.Geometry.Triangulation
         [Description("Creates a voronoi diagram from a list of coplanar, non-duplicate points. The returned polylines cells will correspond to the input points by index.")]
         [Input("points", "The coplanar points to use to generate the voronoi diagram. The algorithm can currently not handle colinear points.")]
         [Input("plane", "Optional plane for the voronoi. If provided, all points must be complanar with the plane. If nothing provided, a best fit plane will be calculated. For colinear points, if nothing no plane provided, a plane aligned with the global Z-axis will be created.")]
-        [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
         [Input("boundarySize", "To handle problems at boundaries, extra points are added outside the bounds of the provided points for the generation of the voronoi and then culled away. This value controls how far off these points should be created. If a zero or negative value is provided, this value will be calculated automatically, based on the size of the boundingbox of the provided points.", typeof(Length))]
+        [Input("tolerance", "Tolerance to be used in the method.", typeof(Length))]
         [Output("regions", "Voronoi regions calculated by the method. The position in the list will correspond to the position in the list of the provided points.")]
         public static List<Polyline> VoronoiRegions(List<Point> points, Plane plane = null, double boundarySize = -1, double tolerance = Tolerance.Distance)
         {
@@ -641,6 +641,7 @@ namespace BH.Engine.Geometry.Triangulation
         /***************************************************/
     }
 }
+
 
 
 

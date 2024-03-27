@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2023, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2024, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -37,7 +37,7 @@ namespace BH.Engine.Representation
     {
         [Description("Sets a RenderMesh in the Fragments of the BHoMObject.\n" +
            "If specified, the `meshRepresentation` should contain a valid mesh representation for the BHoMObject." +
-           "If meshRepresentation is null, attempts to compute a Rendermesh for the object. ")]
+           "If meshRepresentation is null, attempts to compute a Rendermesh for the object.")]
         [Input("bHoMObject", "BHoMObject to set the representation for.")]
         [Input("meshRepresentation", "A valid mesh representation for the BHoMObject.")]
         public static IBHoMObject ISetRendermesh(this IBHoMObject bHoMObject, object meshRepresentation = null, RenderMeshOptions renderMeshOptions = null)
@@ -96,6 +96,7 @@ namespace BH.Engine.Representation
         }
     }
 }
+
 
 
 
