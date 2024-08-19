@@ -40,8 +40,8 @@ namespace BH.Engine.Representation
         [Description("Rationalises the Curve into a Polyline.")]
         public static Polyline IRationalise(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
-            if (curve is Polyline) // no need to rationalise
-                return curve as Polyline;
+            if (curve is IPolyline) // no need to rationalise
+                return curve.IToPolyline();
 
             if (curve is Line) // no need to rationalise
                 return new Polyline() { ControlPoints = (curve as Line).ControlPoints() };
