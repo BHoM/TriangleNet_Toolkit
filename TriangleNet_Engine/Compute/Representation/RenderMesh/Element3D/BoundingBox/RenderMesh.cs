@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
+using BH.oM.Base.Attributes;
 using System.ComponentModel;
 
 namespace BH.Engine.Representation
@@ -39,26 +40,30 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this CompositeGeometry compositeGeometry, RenderMeshOptions renderMeshOptions = null)
+        [Description("Returns the RenderMesh for the given object, that is a mesh that can be used for Graphical Display.")]
+        [Input("bbox", "Input bounding box.")]
+        [Input("renderMeshOptions", "Input renderMeshOptions for how the RenderMesh is computed.")]
+        [Output("renderMesh", "Resulting RenderMesh.")]
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this BoundingBox bbox, RenderMeshOptions renderMeshOptions = null)
         {
-            if (compositeGeometry == null)
+            if (bbox == null)
             {
-                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null composite geometry object.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null bounding box.");
                 return null;
             }
 
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            List<RenderMesh> renderMeshes = new List<RenderMesh>();
+            double length = bbox.Max.X - bbox.Min.X;
+            double depth = bbox.Max.Y - bbox.Min.Y;
+            double height = bbox.Max.Z - bbox.Min.Z;
 
-            for (int i = 0; i < compositeGeometry.Elements.Count; i++)
-                renderMeshes.Add(IRenderMesh(compositeGeometry.Elements[i]));
+            Point centrePoint = new Point() { X = bbox.Min.X + length / 2, Y = bbox.Min.Y + depth / 2, Z = bbox.Min.Z + height / 2 };
 
-            return BH.Engine.Representation.Compute.JoinRenderMeshes(renderMeshes);
+            return BoxRenderMesh(centrePoint, length, depth, height);
         }
     }
 }
-
 
 
 
