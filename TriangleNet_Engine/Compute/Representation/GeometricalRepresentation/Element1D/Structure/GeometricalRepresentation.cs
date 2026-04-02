@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -30,35 +30,39 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
+using BH.oM.Structure.Elements;
+using BH.Engine.Structure;
+using BH.oM.Structure.Constraints;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        /***************************************************/
-        /**** Public Methods - Graphics                 ****/
-        /***************************************************/
-
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this BoundingBox bbox, RenderMeshOptions renderMeshOptions = null)
+        [Description("Returns the geometrical representation of the Bar. It can be as simple as its Centreline, or an Extrusion obtained from its Cross Section.")]
+        public static IGeometry GeometricalRepresentation(this Bar bar, RepresentationOptions reprOptions = null)
         {
-            if (bbox == null)
+            if (bar == null)
             {
-                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null bounding box.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null bar.");
                 return null;
             }
 
-            renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
+            reprOptions = reprOptions ?? new RepresentationOptions();
 
-            double length = bbox.Max.X - bbox.Min.X;
-            double depth = bbox.Max.Y - bbox.Min.Y;
-            double height = bbox.Max.Z - bbox.Min.Z;
+            if (!reprOptions.Detailed1DElements)
+                return bar.Centreline(); //returns the piped centreline.
+            else
+            {
+                // Gets the BH.oM.Geometry.Extrusion out of the Bar. If the profile is made of two curves (e.g. I section), selects only the outermost.
+                Extrusion barOutermostExtrusion = bar.Extrude(false).Cast<Extrusion>().OrderBy(extr => extr.Curve.IArea()).First();
+                barOutermostExtrusion.Capped = reprOptions.Cap1DElements;
 
-            Point centrePoint = new Point() { X = bbox.Min.X + length / 2, Y = bbox.Min.Y + depth / 2, Z = bbox.Min.Z + height / 2 };
-
-            return BoxRenderMesh(centrePoint, length, depth, height);
+                return barOutermostExtrusion;
+            }
         }
     }
 }
+
 
 
 

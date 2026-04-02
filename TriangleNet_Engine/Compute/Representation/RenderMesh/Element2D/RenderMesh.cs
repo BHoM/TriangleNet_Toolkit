@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -21,7 +21,6 @@
  */
 
 using BH.oM.Geometry;
-using BHOG = BH.oM.Geometry;
 using BH.oM.Graphics;
 using System;
 using System.Collections;
@@ -29,7 +28,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
-using BHEG = BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
 using BH.oM.Base.Attributes;
@@ -43,53 +41,52 @@ namespace BH.Engine.Representation
         /***************************************************/
 
         [Description("Returns the RenderMesh for the given object, that is a mesh that can be used for Graphical Display.")]
-        [Input("cone", "Input cone.")]
+        [Input("planarSurface", "Input planarSurface.")]
         [Input("renderMeshOptions", "Input renderMeshOptions for how the RenderMesh is computed.")]
         [Output("renderMesh", "Resulting RenderMesh.")]
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this Cone cone, RenderMeshOptions renderMeshOptions = null)
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this PlanarSurface planarSurface, RenderMeshOptions renderMeshOptions = null)
         {
-            if (cone == null)
+            if (planarSurface == null)
             {
-                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null cone.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null planar surface.");
                 return null;
             }
 
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            int coneFaces = 4; // by default this creates a pyramid
-            List<double> pointParams = new List<double>();
-
-            if (coneFaces == 4)
-                pointParams = new List<double>() { 0.125, 0.375, 0.625, 0.875, 0.125 }; // for 4 corners, make sure the pyramid is oriented like global axes
-            else
-                pointParams = Enumerable.Range(0, coneFaces + 1).Select(i => (double)((double)i / (double)coneFaces)).ToList();
-
-            Circle baseCircle = BH.Engine.Geometry.Create.Circle(cone.Centre, cone.Axis, cone.Radius);
-            List<Point> pointsOnBase = pointParams.Select(par => baseCircle.IPointAtParameter(par)).ToList();
-            Vector coneHeightVector = Compute.Scale(cone.Axis, cone.Height);
-
-            Point topPoint = new Point() {
-                X = cone.Centre.X + BHEG.Modify.Project(coneHeightVector, BHOG.Plane.XY).X,
-                Y = cone.Centre.Y + BHEG.Modify.Project(coneHeightVector, BHOG.Plane.XY).Y,// Math.Sin(BHEG.Query.Angle(BHEG.Modify.Project(cone.Axis, BHOG.Plane.XY), BHOG.Vector.XAxis)),
-                Z = cone.Centre.Z + coneHeightVector.Z
-            };
-
-            List<Face> faces = new List<Face>();
-            List<Point> vertices = new List<Point>();
-
-            vertices.AddRange(pointsOnBase);
-            vertices.Add(topPoint);
-
-            for (int i = 0; i < pointsOnBase.Count - 1; i++)
+            Polyline externalBoundary = planarSurface.ExternalBoundary.IRationalise(renderMeshOptions);
+            if (externalBoundary == null)
             {
-                faces.Add(new Face() { A = i, B = i + 1, C = vertices.Count - 1});
+                BH.Engine.Base.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if the {nameof(planarSurface.ExternalBoundary)} is of type {nameof(Polyline)}");
+                return null;
             }
 
-            return new RenderMesh() { Vertices = vertices.Select(pt => (RenderPoint)pt).ToList(), Faces = faces };
-        }
+            List<Polyline> internalBoundaries = planarSurface.InternalBoundaries.Select(c => c.IRationalise(renderMeshOptions)).ToList();
 
+            if (internalBoundaries.Count != internalBoundaries.Count)
+            {
+                BH.Engine.Base.Compute.RecordError($"Meshing for {nameof(PlanarSurface)} works only if all of the {nameof(planarSurface.InternalBoundaries)} are of type {nameof(Polyline)}");
+                return null;
+            }
+
+            List<Polyline> polylines = BH.Engine.Geometry.Triangulation.Compute.DelaunayTriangulation(externalBoundary, internalBoundaries);
+            List<RenderMesh> singleFacesMeshes = new List<RenderMesh>();
+
+            foreach (Polyline poly in polylines)
+            {
+                RenderMesh singleFaceMesh = new RenderMesh();
+
+                singleFaceMesh.Vertices.AddRange(poly.ControlPoints.Select(p => (RenderPoint)p));
+                singleFaceMesh.Faces.Add(new Face() { A = 0, B = 1, C = 2 });
+
+                singleFacesMeshes.Add(singleFaceMesh);
+            }
+
+            return singleFacesMeshes.JoinRenderMeshes();
+        }
     }
 }
+
 
 
 

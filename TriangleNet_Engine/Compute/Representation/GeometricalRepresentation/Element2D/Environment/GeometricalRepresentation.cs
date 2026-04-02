@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -30,21 +30,20 @@ using System.Text.RegularExpressions;
 using BH.Engine.Geometry;
 using BH.oM.Base;
 using System.ComponentModel;
-using BH.oM.Structure.Elements;
-using BH.Engine.Structure;
-using BH.Engine.Spatial;
 using BH.oM.Structure.Constraints;
+using BH.oM.Environment;
+using BH.oM.Environment.Elements;
 
 namespace BH.Engine.Representation
 {
     public static partial class Compute
     {
-        [Description("Returns the geometrical representation of the Structure Panel. It can be as simple as its middle Surface, Composite Geometry representing its thickness.")]
-        public static IGeometry GeometricalRepresentation(this Panel panel, RepresentationOptions reprOptions = null)
+        [Description("Returns the geometrical representation of the Environment Panel. It can be as simple as its middle Surface, Composite Geometry representing its thickness.")]
+        public static IGeometry GeometricalRepresentation(this BH.oM.Environment.Elements.Panel panel, RepresentationOptions reprOptions = null)
         {
-            if (panel == null)
+            if(panel == null)
             {
-                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null Structural Panel.");
+                BH.Engine.Base.Compute.RecordError("Cannot compute the geometrical representation of a null Environmental Panel.");
                 return null;
             }
 
@@ -60,17 +59,14 @@ namespace BH.Engine.Representation
             {
                 CompositeGeometry compositeGeometry = new CompositeGeometry();
 
-                double thickness = panel.Property.ITotalThickness();
+                double thickness = BH.Engine.Environment.Query.Thickness(panel);
                 Vector translateVect = new Vector() { Z = -thickness / 2 };
                 Vector extrudeVect = new Vector() { Z = thickness };
 
-                Vector upHalf = new Vector() { X = 0, Y = 0, Z = thickness / 2 };
-                Vector downHalf = new Vector() { X = 0, Y = 0, Z = -thickness / 2 };
+                PlanarSurface topSrf = centralPlanarSurface.ITranslate(new Vector() { Z = thickness / 2 }) as PlanarSurface;
+                PlanarSurface botSrf = centralPlanarSurface.ITranslate(new Vector() { Z = -thickness / 2 }) as PlanarSurface;
 
-                PlanarSurface topSrf = centralPlanarSurface.ITranslate(upHalf) as PlanarSurface;
-                PlanarSurface botSrf = centralPlanarSurface.ITranslate(downHalf) as PlanarSurface;
-
-                IEnumerable<ICurve> internalEdgesBot = panel.InternalElementCurves().Select(c => c.ITranslate(translateVect));
+                IEnumerable<ICurve> internalEdgesBot = panel.Openings.SelectMany(o => o.Edges.Select(e => e.Curve.ITranslate(translateVect)));
                 IEnumerable<Extrusion> internalEdgesExtrusions = internalEdgesBot.Select(c => BH.Engine.Geometry.Create.Extrusion(c, extrudeVect));
 
                 IEnumerable<ICurve> externalEdgesBot = panel.ExternalEdges.Select(c => c.Curve.ITranslate(translateVect));
@@ -86,6 +82,7 @@ namespace BH.Engine.Representation
         }
     }
 }
+
 
 
 

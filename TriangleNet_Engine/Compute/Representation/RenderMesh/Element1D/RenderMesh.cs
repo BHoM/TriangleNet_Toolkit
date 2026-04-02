@@ -1,6 +1,6 @@
 /*
  * This file is part of the Buildings and Habitats object Model (BHoM)
- * Copyright (c) 2015 - 2025, the respective contributors. All rights reserved.
+ * Copyright (c) 2015 - 2026, the respective contributors. All rights reserved.
  *
  * Each contributor holds copyright over their respective contributions.
  * The project versioning (Git) records all such contribution source information.
@@ -39,22 +39,17 @@ namespace BH.Engine.Representation
         /**** Public Methods - Graphics                 ****/
         /***************************************************/
 
-        public static BH.oM.Graphics.RenderMesh RenderMesh(this CompositeGeometry compositeGeometry, RenderMeshOptions renderMeshOptions = null)
+        [Description("Attempts to rationalise the curve into a Polyline; if successful, it pipes the polyline and returns the meshed pipe.")]
+        public static BH.oM.Graphics.RenderMesh RenderMesh(this ICurve curve, RenderMeshOptions renderMeshOptions = null)
         {
-            if (compositeGeometry == null)
-            {
-                BH.Engine.Base.Compute.RecordError("Cannot compute the mesh of a null composite geometry object.");
-                return null;
-            }
-
             renderMeshOptions = renderMeshOptions ?? new RenderMeshOptions();
 
-            List<RenderMesh> renderMeshes = new List<RenderMesh>();
+            Polyline polyline = curve.IRationalise(renderMeshOptions);
 
-            for (int i = 0; i < compositeGeometry.Elements.Count; i++)
-                renderMeshes.Add(IRenderMesh(compositeGeometry.Elements[i]));
+            if (polyline != null)
+                return polyline.GeometricalRepresentation(renderMeshOptions.RepresentationOptions).IRenderMesh(renderMeshOptions);
 
-            return BH.Engine.Representation.Compute.JoinRenderMeshes(renderMeshes);
+            return null;
         }
     }
 }
